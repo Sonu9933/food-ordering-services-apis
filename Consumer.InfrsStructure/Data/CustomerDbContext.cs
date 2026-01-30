@@ -46,24 +46,35 @@ namespace ConsumerEnpoints.Data
                 .HasDatabaseName("ix_order_detail_id");
 
             //Relationship
+            // Order -> Customer relationship
             modelBuilder.Entity<Order>()
-                .HasOne(e => e.OrderDetails)
-                .WithMany()
-                .HasForeignKey(e=>e.RestaurantID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Order>()
-                .HasOne(e => e.OrderDetails)
-                .WithMany()
+                .HasOne(o => o.Customer)
+                .WithMany(c => c.Orders)
                 .HasForeignKey(e => e.CustomerID)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Order -> Restaurant relationship
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Restaurant)
+                .WithMany(r => r.Orders)
+                .HasForeignKey(e => e.RestaurantID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // OrderDetail -> Order relationship (One-to-Many)
             modelBuilder.Entity<OrderDetail>()
                 .HasOne(e => e.Order)
                 .WithMany(o => o.OrderDetails)
                 .HasForeignKey(e => e.OrderID)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // OrderDetail -> MenuItem relationship
+            modelBuilder.Entity<OrderDetail>()
+                .HasOne(e => e.MenuItem)
+                .WithMany()
+                .HasForeignKey(e => e.ItemID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // MenuItem -> Restaurant relationship
             modelBuilder.Entity<MenuItems>()
                 .HasOne(e => e.Restaurant)
                 .WithMany()
