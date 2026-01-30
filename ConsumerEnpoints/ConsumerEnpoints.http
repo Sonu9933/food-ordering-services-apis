@@ -1,0 +1,6 @@
+@ConsumerEnpoints_HostAddress = http://localhost:5120
+
+GET {{ConsumerEnpoints_HostAddress}}/GetSecurityToken/
+Accept: application/json
+
+###

@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="Consumer.Core/Customer.Core.csproj" Id="3e71d1e2-6724-4293-a3fb-0d611ceaff3c" />
+  <Project Path="Consumer.InfrsStructure/Customer.Infrastructure.csproj" Id="b52627bf-d780-4976-8a36-807a5e1d61e9" />
+  <Project Path="ConsumerEnpoints/Customer.API.csproj" />
+  <Project Path="ConsumerEnpointsTest/Customer.UnitTests.csproj" />
+</Solution>
