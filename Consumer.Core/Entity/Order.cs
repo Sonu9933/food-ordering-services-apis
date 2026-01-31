@@ -13,6 +13,10 @@ namespace Customer.Core.Entity
         public OrderStatus Status { get; set; }
         public DateTime OrderDate { get; set; }
         public int TotalAmount { get; set; }
+
+        // Navigation properties
+        public Customer Customer { get; set; }
+        public Restaurant Restaurant { get; set; }
         public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
     }
 }
