@@ -1,8 +1,9 @@
-﻿using ConsumerEnpoints.Models;
+﻿using Asp.Versioning;
+using ConsumerEnpoints.Models;
 using Customer.Core.Contracts.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ConsumerEnpoints.Controllers
+namespace Customer.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -17,6 +18,7 @@ namespace ConsumerEnpoints.Controllers
             this.logger = logger;
         }
 
+        [ApiVersion(1)]
         [HttpPost("login-consumer")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

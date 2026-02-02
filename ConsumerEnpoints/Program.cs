@@ -1,15 +1,16 @@
-using ConsumerEnpoints.Data;
+using Asp.Versioning;
 using ConsumerEnpoints.Services;
 using Customer.Core.Contracts.Repositories;
 using Customer.Core.Contracts.Services;
 using Customer.Core.Services;
+using Customer.Infrastructure.Data;
 using Customer.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace ConsumerEnpoints
+namespace Customer.API
 {
     public class Program
     {
@@ -53,6 +54,21 @@ namespace ConsumerEnpoints
                 };
             });
 
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1);
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new UrlSegmentApiVersionReader(),
+                    new HeaderApiVersionReader("X-Api-Version"));
+            })
+            .AddMvc() // This is needed for controllers
+            .AddApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'V";
+                options.SubstituteApiVersionInUrl = true;
+            });
 
             var app = builder.Build();
 

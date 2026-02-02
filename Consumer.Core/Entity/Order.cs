@@ -1,6 +1,5 @@
 ﻿using Customer.Core.Enum;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Customer.Core.Entity
 {

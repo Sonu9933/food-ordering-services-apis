@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Customer.Core.Entity;
 
-namespace ConsumerEnpoints.Data
+namespace Customer.Infrastructure.Data
 {
     public class CustomerDbContext(DbContextOptions<CustomerDbContext> options) : DbContext(options)
     {
-        public virtual DbSet<Customer.Core.Entity.Customer> Customers { get; set; }
+        public virtual DbSet<Core.Entity.Customer> Customers { get; set; }
 
         public virtual DbSet<Order> Orders { get; set; }
 
@@ -20,6 +20,14 @@ namespace ConsumerEnpoints.Data
             base.OnModelCreating(modelBuilder);
 
             //Index's
+            ConfigureIndexes(modelBuilder);
+
+            //Relationship's
+            ConfigureRelationships(modelBuilder);
+        }
+
+        private static void ConfigureIndexes(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Customer.Core.Entity.Customer>()
                 .HasIndex(c => c.Email)
                 .IsUnique()
@@ -44,8 +52,10 @@ namespace ConsumerEnpoints.Data
                 .HasIndex(o => o.OrderDetailID)
                 .IsUnique()
                 .HasDatabaseName("ix_order_detail_id");
+        }
 
-            //Relationship
+        private static void ConfigureRelationships(ModelBuilder modelBuilder)
+        {
             // Order -> Customer relationship
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.Customer)
@@ -81,6 +91,5 @@ namespace ConsumerEnpoints.Data
                 .HasForeignKey(e => e.RestaurantID)
                 .OnDelete(DeleteBehavior.Cascade);
         }
-
     }
 }

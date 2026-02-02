@@ -1,4 +1,4 @@
-﻿using ConsumerEnpoints.Controllers;
+﻿using Customer.API.Controllers;
 using ConsumerEnpoints.Models;
 using Customer.Core.Contracts.Services;
 using Microsoft.Extensions.Logging;

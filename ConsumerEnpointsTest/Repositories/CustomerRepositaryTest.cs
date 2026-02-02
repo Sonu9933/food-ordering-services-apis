@@ -1,4 +1,4 @@
-﻿using ConsumerEnpoints.Data;
+﻿using Customer.Infrastructure.Data;
 using Customer.Core.Contracts.Repositories;
 using Customer.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
