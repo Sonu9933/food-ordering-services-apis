@@ -10,6 +10,7 @@ namespace Customer.Core.Entity
         public string Location { get; set; }
         public string ContactNumber { get; set; }
         public DateTime CreatedAt { get; set; }
+        // Navigation properties
         public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

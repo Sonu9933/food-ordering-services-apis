@@ -1,22 +1,37 @@
 ﻿using Customer.Infrastructure.Data;
 using Customer.Core.Contracts.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Customer.Infrastructure.Repositories
 {
     public class CustomerRepositary : ICustomerRepositary
     {
         private readonly CustomerDbContext customerDbContext;
+        private IDistributedCache distributedCache { get; }
 
-        public CustomerRepositary(CustomerDbContext customerDbContext) 
+        public CustomerRepositary(CustomerDbContext customerDbContext, IDistributedCache distributedCache) 
         {
             this.customerDbContext = customerDbContext;
-        } 
+            this.distributedCache = distributedCache;
+        }
 
         public async Task<Core.Entity.Customer?> LoginCustomerAsync(string email, string password)
         {
+            var cacheCustomer = await distributedCache.GetStringAsync(email);
+
+            if (cacheCustomer != null)
+            {
+                var cachedCustomer = System.Text.Json.JsonSerializer.Deserialize<Core.Entity.Customer>(cacheCustomer);
+                if (cachedCustomer != null && BCrypt.Net.BCrypt.Verify(password, cachedCustomer.PasswordHash))
+                {
+                    return cachedCustomer;
+                }
+            }
+
             var customer = await customerDbContext
                 .Customers
+                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Email == email);
 
             if (customer == null) { 
@@ -26,6 +41,12 @@ namespace Customer.Infrastructure.Repositories
             customer.LastLogin = DateTime.UtcNow;
             customerDbContext.Customers.Update(customer);
             await customerDbContext.SaveChangesAsync();
+
+            distributedCache.SetString(email, System.Text.Json.JsonSerializer.Serialize(customer),
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
 
             return customer;
         }

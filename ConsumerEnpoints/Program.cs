@@ -32,6 +32,8 @@ namespace Customer.API
                 .Configuration
                 .GetConnectionString("ConsumerDBConnection")));
 
+            // RateLimiter
+            // Configure Rate Limiter Window
             builder.Services.AddRateLimiter(options =>
             {
                 options.AddFixedWindowLimiter("limiting", opt =>
@@ -45,6 +47,8 @@ namespace Customer.API
                 options.RejectionStatusCode = 429;
             });
 
+            // Authentication and Authorization
+            // Configure JWT Authentication
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -66,6 +70,8 @@ namespace Customer.API
                 };
             });
 
+            // ApiVersioning
+            // Configure Api Versioning
             builder.Services.AddApiVersioning(options =>
             {
                 options.DefaultApiVersion = new ApiVersion(1);
@@ -80,6 +86,13 @@ namespace Customer.API
             {
                 options.GroupNameFormat = "'v'V";
                 options.SubstituteApiVersionInUrl = true;
+            });
+
+            //Redis cache
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+
             });
 
             builder.Services.AddScoped<IAuthCustomerService, AuthConsumerService>();
@@ -99,8 +112,10 @@ namespace Customer.API
 
             app.UseAuthorization();
 
-           //app.MapGet("/api/resource", () => "This endpoint is rate limited")
-           //.RequireRateLimiting("fixed"); // Apply specific policy to an endpoint
+            //app.MapGet("/api/resource", () => "This endpoint is rate limited")
+            //.RequireRateLimiting("fixed"); // Apply specific policy to an endpoint
+            app.UseRateLimiter();
+
             app.MapControllers().RequireRateLimiting("limiting");
 
             app.Run();

@@ -3,12 +3,14 @@ using Customer.Core.Contracts.Repositories;
 using Customer.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Customer.UnitTests.Repositories
 {
     internal class CustomerRepositaryTest
     {
         private ICustomerRepositary customerRepositary;
+        private Mock<IDistributedCache> _mockCache;
 
         [SetUp]
         public void Setup()
@@ -40,7 +42,9 @@ namespace Customer.UnitTests.Repositories
             var customerDbContext = new Mock<CustomerDbContext>(options);
             customerDbContext.Setup(m => m.Customers).Returns(mockConsumer.Object);
 
-            customerRepositary = new CustomerRepositary(customerDbContext.Object);
+            _mockCache = new Mock<IDistributedCache>();
+
+            customerRepositary = new CustomerRepositary(customerDbContext.Object, _mockCache.Object);
         }
 
         [Test]
