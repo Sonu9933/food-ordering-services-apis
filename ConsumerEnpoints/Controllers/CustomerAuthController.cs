@@ -2,11 +2,13 @@
 using ConsumerEnpoints.Models;
 using Customer.Core.Contracts.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Customer.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("limiting")]
     public class CustomerAuthController : ControllerBase
     {
         private readonly IAuthCustomerService authCustomerService;
@@ -45,6 +47,7 @@ namespace Customer.API.Controllers
             }
         }
 
+        [ApiVersion(1)]
         [HttpPost("register-consumer")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(object), StatusCodes.Status500InternalServerError)]

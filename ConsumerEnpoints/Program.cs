@@ -6,9 +6,11 @@ using Customer.Core.Services;
 using Customer.Infrastructure.Data;
 using Customer.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.RateLimiting;
 
 namespace Customer.API
 {
@@ -21,6 +23,7 @@ namespace Customer.API
             // Add services to the container.
 
             builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -29,9 +32,18 @@ namespace Customer.API
                 .Configuration
                 .GetConnectionString("ConsumerDBConnection")));
 
-            builder.Services.AddScoped<IAuthCustomerService, AuthConsumerService>();
-            builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-            builder.Services.AddScoped<ICustomerRepositary, CustomerRepositary>();
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("limiting", opt =>
+                {
+                    opt.PermitLimit = 4;
+                    opt.Window = TimeSpan.FromSeconds(12);
+                    opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                    opt.QueueLimit = 2;
+                });
+
+                options.RejectionStatusCode = 429;
+            });
 
             builder.Services.AddAuthentication(options =>
             {
@@ -70,6 +82,10 @@ namespace Customer.API
                 options.SubstituteApiVersionInUrl = true;
             });
 
+            builder.Services.AddScoped<IAuthCustomerService, AuthConsumerService>();
+            builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+            builder.Services.AddScoped<ICustomerRepositary, CustomerRepositary>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -83,8 +99,9 @@ namespace Customer.API
 
             app.UseAuthorization();
 
-
-            app.MapControllers();
+           //app.MapGet("/api/resource", () => "This endpoint is rate limited")
+           //.RequireRateLimiting("fixed"); // Apply specific policy to an endpoint
+            app.MapControllers().RequireRateLimiting("limiting");
 
             app.Run();
         }
