@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using ConsumerEnpoints.Services;
+using Customer.API.CustomMiddleware;
 using Customer.Core.Contracts.Repositories;
 using Customer.Core.Contracts.Services;
 using Customer.Core.Services;
