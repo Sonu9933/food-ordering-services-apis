@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using Customer.Infrastructure.Data;
+using FoodOrderingServices.Infrastructure.Data;
 
 namespace FoodOrderingServices.IntegrationTests
 {
@@ -30,7 +30,7 @@ namespace FoodOrderingServices.IntegrationTests
             // Override services for testing
             builder.ConfigureServices(services =>
             {
-                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<CustomerDbContext>));
+                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
 
                 if (descriptor != null)
                 {
@@ -39,7 +39,7 @@ namespace FoodOrderingServices.IntegrationTests
                 }
 
                 // Step 2: Register test database (in-memory database)
-                services.AddDbContext<CustomerDbContext>(options =>
+                services.AddDbContext<ApplicationDbContext>(options =>
                 {
                     options.UseInMemoryDatabase(_dbName);
 

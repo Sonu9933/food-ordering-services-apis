@@ -1,23 +1,23 @@
-﻿using ConsumerEnpoints.Models;
-using Customer.Core.Contracts.Repositories;
-using Customer.Core.Contracts.Services;
+﻿using Customer.Core.Contracts.Services;
+using FoodOrderingServices.Core.Contracts.Repositories;
+using FoodOrderingServices.Core.DTOs.Customer;
 
 namespace ConsumerEnpoints.Services
 {
     public class AuthConsumerService : IAuthCustomerService
     {
-        public ICustomerRepositary customerAuthRepositary { get; }
-        public IJwtTokenService jwtTokenService { get; }
+        public ICustomerRepositary _customerAuthRepositary;
+        public IJwtTokenService _jwtTokenService;
 
         public AuthConsumerService(ICustomerRepositary customerAuthRepositary, IJwtTokenService jwtTokenService)
         {
-            this.customerAuthRepositary = customerAuthRepositary;
-            this.jwtTokenService = jwtTokenService;
+            _customerAuthRepositary = customerAuthRepositary;
+            _jwtTokenService = jwtTokenService;
         }
 
         public async Task<AuthResponse?> AuthenticateAsync(LoginRequest loginRequest)
         {
-            var customer = await customerAuthRepositary.LoginCustomerAsync(loginRequest.Email, loginRequest.Password);
+            var customer = await _customerAuthRepositary.LoginCustomerAsync(loginRequest.Email, loginRequest.Password);
             if (customer == null)
             {
                 return null;
@@ -28,14 +28,14 @@ namespace ConsumerEnpoints.Services
                 Email = customer.Email,
                 Id = customer.CustomerId,
                 FullName = customer.CustomerName,
-                Token = jwtTokenService.GenerateToken(customer),
+                Token = _jwtTokenService.GenerateToken(customer),
                 ExpiresAt = DateTime.UtcNow,
             };
         }
 
-        public async Task<Customer.Core.Entity.Customer?> RegisterAsync(RegisterRequest registerRequest)
+        public async Task<FoodOrderingServices.Core.Entity.Customer?> RegisterAsync(RegisterRequest registerRequest)
         {
-            var registerCustomer = await customerAuthRepositary
+            var registerCustomer = await _customerAuthRepositary
                 .RegisterCustomerAsync(registerRequest.ConsumerName, 
                 registerRequest.Email, 
                 registerRequest.Password);

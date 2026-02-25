@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ConsumerEnpoints.Models
+namespace FoodOrderingServices.Core.DTOs.Customer
 {
     public class LoginRequest
     {

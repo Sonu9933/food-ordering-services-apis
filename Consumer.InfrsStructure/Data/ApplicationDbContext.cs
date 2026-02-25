@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Customer.Core.Entity;
+using FoodOrderingServices.Core.Entity;
 
-namespace Customer.Infrastructure.Data
+namespace FoodOrderingServices.Infrastructure.Data
 {
-    public class CustomerDbContext(DbContextOptions<CustomerDbContext> options) : DbContext(options)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
     {
         public virtual DbSet<Core.Entity.Customer> Customers { get; set; }
 
@@ -28,7 +28,7 @@ namespace Customer.Infrastructure.Data
 
         private static void ConfigureIndexes(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Customer.Core.Entity.Customer>()
+            modelBuilder.Entity<Core.Entity.Customer>()
                 .HasIndex(c => c.Email)
                 .IsUnique()
                 .HasDatabaseName("ix_customer_email");

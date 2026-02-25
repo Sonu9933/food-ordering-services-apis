@@ -1,11 +1,11 @@
 using Asp.Versioning;
 using ConsumerEnpoints.Services;
 using Customer.API.CustomMiddleware;
-using Customer.Core.Contracts.Repositories;
 using Customer.Core.Contracts.Services;
 using Customer.Core.Services;
-using Customer.Infrastructure.Data;
 using Customer.Infrastructure.Repositories;
+using FoodOrderingServices.Core.Contracts.Repositories;
+using FoodOrderingServices.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -13,21 +13,39 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Threading.RateLimiting;
 
-namespace Customer.API
+namespace FoodOrderingServices.API
 {
+    /// <summary>
+    /// Application entry point and service configuration.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Main entry point for the application.
+        /// Configures services, middleware, and starts the web host.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
+        /// <summary>
+        /// Main entry point for the application.
+        /// Configures services, middleware, and starts the web host.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
+        /// <summary>
+        /// Main entry point for the application.
+        /// Configures services, middleware, and starts the web host.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add services to the container
             builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<CustomerDbContext>(
+            builder.Services.AddDbContext<ApplicationDbContext>(
                 opt => opt.UseSqlServer(builder
                 .Configuration
                 .GetConnectionString("ConsumerDBConnection")));

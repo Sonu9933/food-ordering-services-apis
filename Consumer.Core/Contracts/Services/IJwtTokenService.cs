@@ -4,7 +4,7 @@ namespace Customer.Core.Contracts.Services
 {
     public interface IJwtTokenService
     {
-        string GenerateToken(Entity.Customer customer);
+        string GenerateToken(FoodOrderingServices.Core.Entity.Customer customer);
 
         ClaimsPrincipal? ValidateToken(string token);
     }

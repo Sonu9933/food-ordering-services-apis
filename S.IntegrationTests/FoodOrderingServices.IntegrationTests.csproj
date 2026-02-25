@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Consumer.InfrsStructure\Customer.Infrastructure.csproj" />
+    <ProjectReference Include="..\Consumer.InfrsStructure\FoodOrderingServices.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

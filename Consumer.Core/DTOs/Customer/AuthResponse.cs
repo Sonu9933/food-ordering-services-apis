@@ -1,4 +1,4 @@
-﻿namespace ConsumerEnpoints.Models
+﻿namespace FoodOrderingServices.Core.DTOs.Customer
 {
     public class AuthResponse
     {

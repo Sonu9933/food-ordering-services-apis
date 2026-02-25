@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Customer.Core.Entity
+namespace FoodOrderingServices.Core.Entity
 {
     public class MenuItems
     {
@@ -11,6 +11,7 @@ namespace Customer.Core.Entity
         public string Description { get; set; }
         public int Price { get; set; }
         public string Category { get; set; }
+
         // Navigation properties
         public Restaurant Restaurant { get; set; }
     }

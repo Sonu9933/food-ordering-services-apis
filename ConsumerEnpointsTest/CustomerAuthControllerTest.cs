@@ -1,6 +1,6 @@
 ﻿using Customer.API.Controllers;
-using ConsumerEnpoints.Models;
 using Customer.Core.Contracts.Services;
+using FoodOrderingServices.Core.DTOs.Customer;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -55,7 +55,7 @@ namespace Customer.UnitTests
                 Password = "Test@!@#123"
             };
 
-            var result = new Core.Entity.Customer()
+            var result = new FoodOrderingServices.Core.Entity.Customer()
             {
                 Email = registerRequest.Email,
                 CreatedAt = DateTime.UtcNow,
@@ -70,7 +70,7 @@ namespace Customer.UnitTests
                 .Setup(s => s.RegisterAsync(registerRequest))
                 .ReturnsAsync(result);
 
-            var customer = await _controller.CosumerRegistrationAsync(registerRequest);
+            var customer = await _controller.ConsumerRegistrationAsync(registerRequest);
 
             Assert.IsNotNull(customer);
         }

@@ -1,9 +1,9 @@
-﻿using Customer.Infrastructure.Data;
-using Customer.Core.Contracts.Repositories;
-using Customer.Infrastructure.Repositories;
+﻿using Customer.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Microsoft.Extensions.Caching.Distributed;
+using FoodOrderingServices.Core.Contracts.Repositories;
+using FoodOrderingServices.Infrastructure.Data;
 
 namespace Customer.UnitTests.Repositories
 {
@@ -15,13 +15,13 @@ namespace Customer.UnitTests.Repositories
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<CustomerDbContext>()
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDb")
                 .Options;
 
-            var data = new List<Core.Entity.Customer>()
+            var data = new List<FoodOrderingServices.Core.Entity.Customer>()
             {
-                new Core.Entity.Customer()
+                new FoodOrderingServices.Core.Entity.Customer()
                 {
                     CreatedAt = DateTime.UtcNow,
                     CustomerId  = Guid.NewGuid(),
@@ -32,14 +32,14 @@ namespace Customer.UnitTests.Repositories
                     UpdatedAt = DateTime.UtcNow
                 }
             }.AsQueryable();
-            var mockConsumer = new Mock<DbSet<Core.Entity.Customer>>();
+            var mockConsumer = new Mock<DbSet<FoodOrderingServices.Core.Entity.Customer>>();
 
-            mockConsumer.As<IQueryable<Core.Entity.Customer>>().Setup(m => m.Provider).Returns(data.Provider);
-            mockConsumer.As<IQueryable<Core.Entity.Customer >>().Setup(m => m.Expression).Returns(data.Expression);
-            mockConsumer.As<IQueryable<Core.Entity.Customer >>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockConsumer.As<IQueryable<Core.Entity.Customer >>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+            mockConsumer.As<IQueryable<FoodOrderingServices.Core.Entity.Customer>>().Setup(m => m.Provider).Returns(data.Provider);
+            mockConsumer.As<IQueryable<FoodOrderingServices.Core.Entity.Customer >>().Setup(m => m.Expression).Returns(data.Expression);
+            mockConsumer.As<IQueryable<FoodOrderingServices.Core.Entity.Customer >>().Setup(m => m.ElementType).Returns(data.ElementType);
+            mockConsumer.As<IQueryable<FoodOrderingServices.Core.Entity.Customer >>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
 
-            var customerDbContext = new Mock<CustomerDbContext>(options);
+            var customerDbContext = new Mock<ApplicationDbContext>(options);
             customerDbContext.Setup(m => m.Customers).Returns(mockConsumer.Object);
 
             _mockCache = new Mock<IDistributedCache>();

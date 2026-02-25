@@ -1,5 +1,5 @@
-﻿using ConsumerEnpoints.Models;
-using Customer.Infrastructure.Data;
+﻿using FoodOrderingServices.Core.DTOs.Customer;
+using FoodOrderingServices.Infrastructure.Data;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 using Xunit;
@@ -10,7 +10,7 @@ namespace FoodOrderingServices.IntegrationTests
     {
         protected readonly HttpClient Client;
         protected readonly IntegrationTestWebAppFactory Factory;
-        protected readonly CustomerDbContext Context;
+        protected readonly ApplicationDbContext Context;
         private readonly IServiceScope _scope;
 
         protected IntegrationTestBase(IntegrationTestWebAppFactory factory)
@@ -21,7 +21,7 @@ namespace FoodOrderingServices.IntegrationTests
 
             _scope = factory.Services.CreateScope();
 
-            Context = _scope.ServiceProvider.GetRequiredService<CustomerDbContext>();
+            Context = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             CleanDatabase();
         }

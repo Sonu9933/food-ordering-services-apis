@@ -1,10 +1,10 @@
-﻿using ConsumerEnpoints.Models;
+﻿using FoodOrderingServices.Core.DTOs.Customer;
 
 namespace Customer.Core.Contracts.Services
 {
     public interface IAuthCustomerService
     {
         Task<AuthResponse?> AuthenticateAsync(LoginRequest loginRequest);
-        Task<Entity.Customer?> RegisterAsync(RegisterRequest registerRequest);
+        Task<FoodOrderingServices.Core.Entity.Customer?> RegisterAsync(RegisterRequest registerRequest);
     }
 }

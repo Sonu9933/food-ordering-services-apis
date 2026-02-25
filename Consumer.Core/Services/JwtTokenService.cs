@@ -16,7 +16,7 @@ namespace Customer.Core.Services
 
         public IConfiguration configuration { get; }
 
-        public string GenerateToken(Entity.Customer customer)
+        public string GenerateToken(FoodOrderingServices.Core.Entity.Customer customer)
         {
             var claims = new List<Claim>
                 {

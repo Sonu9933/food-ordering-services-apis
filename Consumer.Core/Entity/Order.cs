@@ -1,7 +1,7 @@
 ﻿using Customer.Core.Enum;
 using System.ComponentModel.DataAnnotations;
 
-namespace Customer.Core.Entity
+namespace FoodOrderingServices.Core.Entity
 {
     public class Order
     {

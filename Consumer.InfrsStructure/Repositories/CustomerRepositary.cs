@@ -1,35 +1,35 @@
-﻿using Customer.Infrastructure.Data;
-using Customer.Core.Contracts.Repositories;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using FoodOrderingServices.Core.Contracts.Repositories;
+using FoodOrderingServices.Infrastructure.Data;
 
 namespace Customer.Infrastructure.Repositories
 {
     public class CustomerRepositary : ICustomerRepositary
     {
-        private readonly CustomerDbContext customerDbContext;
-        private IDistributedCache distributedCache { get; }
+        private readonly ApplicationDbContext _applicationDbContext;
+        private IDistributedCache _distributedCache;
 
-        public CustomerRepositary(CustomerDbContext customerDbContext, IDistributedCache distributedCache) 
+        public CustomerRepositary(ApplicationDbContext customerDbContext, IDistributedCache distributedCache) 
         {
-            this.customerDbContext = customerDbContext;
-            this.distributedCache = distributedCache;
+            _applicationDbContext = customerDbContext;
+            _distributedCache = distributedCache;
         }
 
-        public async Task<Core.Entity.Customer?> LoginCustomerAsync(string email, string password)
+        public async Task<FoodOrderingServices.Core.Entity.Customer?> LoginCustomerAsync(string email, string password)
         {
-            var cacheCustomer = await distributedCache.GetStringAsync(email);
+            var cacheCustomer = await _distributedCache.GetStringAsync(email);
 
             if (cacheCustomer != null)
             {
-                var cachedCustomer = System.Text.Json.JsonSerializer.Deserialize<Core.Entity.Customer>(cacheCustomer);
+                var cachedCustomer = System.Text.Json.JsonSerializer.Deserialize<FoodOrderingServices.Core.Entity.Customer>(cacheCustomer);
                 if (cachedCustomer != null && BCrypt.Net.BCrypt.Verify(password, cachedCustomer.PasswordHash))
                 {
                     return cachedCustomer;
                 }
             }
 
-            var customer = await customerDbContext
+            var customer = await _applicationDbContext
                 .Customers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Email == email);
@@ -39,10 +39,10 @@ namespace Customer.Infrastructure.Repositories
             }
 
             customer.LastLogin = DateTime.UtcNow;
-            customerDbContext.Customers.Update(customer);
-            await customerDbContext.SaveChangesAsync();
+            _applicationDbContext.Customers.Update(customer);
+            await _applicationDbContext.SaveChangesAsync();
 
-            distributedCache.SetString(email, System.Text.Json.JsonSerializer.Serialize(customer),
+            _distributedCache.SetString(email, System.Text.Json.JsonSerializer.Serialize(customer),
                 new DistributedCacheEntryOptions
                 {
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
@@ -51,16 +51,16 @@ namespace Customer.Infrastructure.Repositories
             return customer;
         }
 
-        public async Task<Core.Entity.Customer?> RegisterCustomerAsync(string customerName, 
+        public async Task<FoodOrderingServices.Core.Entity.Customer?> RegisterCustomerAsync(string customerName, 
             string email, 
             string password)
         {
-            if (await customerDbContext.Customers.AnyAsync(c => c.Email == email))
+            if (await _applicationDbContext.Customers.AnyAsync(c => c.Email == email))
             {
                 return null;
             }
 
-            var customer = new Core.Entity.Customer
+            var customer = new FoodOrderingServices.Core.Entity.Customer
             {
                 CustomerId = new Guid(),
                 CustomerName = customerName,
@@ -71,8 +71,8 @@ namespace Customer.Infrastructure.Repositories
                 LastLogin = null
             };
 
-            await customerDbContext.Customers.AddAsync(customer);
-            await customerDbContext.SaveChangesAsync();
+            await _applicationDbContext.Customers.AddAsync(customer);
+            await _applicationDbContext.SaveChangesAsync();
             return customer;
         }
     }

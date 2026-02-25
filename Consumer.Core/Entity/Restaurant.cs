@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Customer.Core.Entity
+namespace FoodOrderingServices.Core.Entity
 {
     public class Restaurant
     {
@@ -10,6 +10,8 @@ namespace Customer.Core.Entity
         public string Location { get; set; }
         public string ContactNumber { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
         // Navigation properties
         public ICollection<Order> Orders { get; set; } = new List<Order>();
     }

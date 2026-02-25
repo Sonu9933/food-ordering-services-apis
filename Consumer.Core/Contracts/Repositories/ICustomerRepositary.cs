@@ -1,4 +1,4 @@
-﻿namespace Customer.Core.Contracts.Repositories
+﻿namespace FoodOrderingServices.Core.Contracts.Repositories
 {
     public interface ICustomerRepositary
     {
