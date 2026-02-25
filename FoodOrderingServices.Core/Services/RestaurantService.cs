@@ -34,24 +34,27 @@ namespace FoodOrderingServices.Core.Services
                 return result;
         }
 
-        public async Task<IEnumerable<Restaurant>?> GetAllRestaurentsAsync()
+        public async Task<IEnumerable<RestaurantDetailDTO>?> GetAllRestaurentsAsync()
         {
+            // Repository likely returns IEnumerable<Restaurant>; map each entity to DTO.
             var result = await _restaurantRepositary.GetAllRestaurentsAsync();
 
             if (result is null)
                 return null;
-            else
-                return result;
+
+            // Map entity collection to DTO collection
+            return [.. result.Select(MapToDetailDto)];
         }
 
-        public async Task<Restaurant?> GetRestaurentByIdAsync(Guid restaurentId)
+        public async Task<RestaurantDetailDTO?> GetRestaurentByIdAsync(Guid restaurentId)
         {
             var result = await _restaurantRepositary.GetRestaurentByIdAsync(restaurentId);
 
             if (result is null)
                 return null;
-            else
-                return result;
+
+            // Map single entity to DTO
+            return MapToDetailDto(result);
         }
 
         public async Task<Restaurant?> UpdateRestaurentAsync(AddRestaurantRequest restaurent)
@@ -62,6 +65,21 @@ namespace FoodOrderingServices.Core.Services
                 return null;
             else
                 return result;
+        }
+
+        // Helper mapping method: entity -> DTO
+        private static RestaurantDetailDTO MapToDetailDto(Restaurant entity)
+        {
+            if (entity == null)
+                return null!;
+
+            return new RestaurantDetailDTO
+            {
+                RestaurantID = entity.RestaurantID,
+                RestaurantName = entity.RestaurantName,
+                Location = entity.Location,
+                ContactNumber = entity.ContactNumber,
+            };
         }
     }
 }

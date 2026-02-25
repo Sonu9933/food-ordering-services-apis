@@ -13,8 +13,8 @@ namespace FoodOrderingServices.API.Controllers
     [EnableRateLimiting("limiting")]
     public class RestaurantController : ControllerBase
     {
-        private readonly IRestaurantService restaurantService;
-        private readonly ILogger<RestaurantController> logger;
+        private readonly IRestaurantService _restaurantService;
+        private readonly ILogger<RestaurantController> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RestaurantController"/> class.
@@ -25,8 +25,109 @@ namespace FoodOrderingServices.API.Controllers
             IRestaurantService restaurantService, 
             ILogger<RestaurantController> logger)
         {
-            this.restaurantService = restaurantService;
-            this.logger = logger;
+            _restaurantService = restaurantService;
+            _logger = logger;
+        }
+
+
+        /// <summary>
+        /// Get a restaurent by id.
+        /// </summary>
+        /// /// <param name="restaurantId">The restaurant registration id.</param>
+        /// <returns>A message with restaurant details or an error message.</returns>
+        /// <response code="200">Restaurant registered successfully.</response>
+        /// <response code="400">Restaurant registration failed.</response>
+        /// <response code="401">Unauthorized access - invalid credentials.</response>
+        /// <response code="500">An unexpected error occurred during registration.</response>
+        [HttpGet("get-restaurent-by-Id")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<RestaurantDetailDTO>> GetRestaurentByIdAsync(Guid restaurantId) 
+        {
+            try
+            {
+                var result = await _restaurantService.GetAllRestaurentsAsync();
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException exception)
+            {
+                _logger.LogWarning(exception, "Unauthorized access while fetching the restaurant");
+                return Unauthorized(new { message = "Invalid credentials provided for fetching the restaurant" });
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"Unexpected error while fetching the restaurant" + exception.Message);
+                return StatusCode(500, new { message = "An error occurred while fetching the restaurant" });
+            }
+        }
+
+        /// <summary>
+        /// Get a restaurent by id.
+        /// </summary>
+        /// /// <param name="restaurantId">The restaurant registration id.</param>
+        /// <returns>A message with deletion is succussfull or an error message.</returns>
+        /// <response code="200">Restaurant registered successfully.</response>
+        /// <response code="400">Restaurant registration failed.</response>
+        /// <response code="401">Unauthorized access - invalid credentials.</response>
+        /// <response code="500">An unexpected error occurred during registration.</response>
+        [HttpGet("delete-restaurent-by-Id")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<string>> DeleteRestaurentByIdAsync(Guid restaurantId)
+        {
+            try
+            {
+                var result = await _restaurantService.DeleteRestaurentAsync(restaurantId);
+                if(result == true)
+                {
+                    return Ok($"Deleted the restaurent : {restaurantId} successfully"); ;
+                }
+
+                return Ok($"Not abe to delete the restaurent : {restaurantId}");
+            }
+            catch (UnauthorizedAccessException exception)
+            {
+                _logger.LogWarning(exception, "Unauthorized access while fetching the restaurant");
+                return Unauthorized(new { message = "Invalid credentials provided for fetching the restaurant" });
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"Unexpected error whilet deleting the restaurent" + exception.Message);
+                return StatusCode(500, new { message = "An error occurred while deleting the restaurent" });
+            }
+        }
+
+        /// <summary>
+        /// Get all the restaurent.
+        /// </summary>
+        /// <returns>A message with all the restaurants details or an error message.</returns>
+        /// <response code="200">Restaurant registered successfully.</response>
+        /// <response code="400">Restaurant registration failed.</response>
+        /// <response code="401">Unauthorized access - invalid credentials.</response>
+        /// <response code="500">An unexpected error occurred during registration.</response>
+        [HttpGet("get-all-restaurents")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<RestaurantDetailDTO>> GetAllRestaurentAsync()
+        {
+            try
+            {
+                var result = await _restaurantService.GetAllRestaurentsAsync();
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException exception)
+            {
+                _logger.LogWarning(exception, "Unauthorized access while fetching the restaurants");
+                return Unauthorized(new { message = "Invalid credentials provided for fetching the restaurants" });
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"Unexpected error while fetching the restaurants" + exception.Message);
+                return StatusCode(500, new { message = "An error occurred while fetching the restaurants" });
+            }
         }
 
         /// <summary>
@@ -47,11 +148,11 @@ namespace FoodOrderingServices.API.Controllers
         {
             try
             {
-                var result = await restaurantService.AddRestaurentAsync(register);
+                var result = await _restaurantService.AddRestaurentAsync(register);
 
                 if(result == null)
                 {
-                    logger.LogWarning($"Failed to register the restaurant: {register.RestaurantName}");
+                    _logger.LogWarning($"Failed to register the restaurant: {register.RestaurantName}");
                     return BadRequest(new { message = "Failed to register the restaurant" });
                 }
 
@@ -59,12 +160,12 @@ namespace FoodOrderingServices.API.Controllers
             }
             catch (UnauthorizedAccessException exception)
             {
-                logger.LogWarning(exception, "Unauthorized access during restaurant registration");
+                _logger.LogWarning(exception, "Unauthorized access during restaurant registration");
                 return Unauthorized(new { message = "Invalid credentials provided for registration" });
             }
             catch (Exception exception) 
             {
-                logger.LogError(exception, $"Unexpected error while registering the restaurant: {register.RestaurantName}");
+                _logger.LogError(exception, $"Unexpected error while registering the restaurant: {register.RestaurantName}");
                 return StatusCode(500, new { message = "An error occurred during registration of the restaurant" });
             }
         }
@@ -87,11 +188,11 @@ namespace FoodOrderingServices.API.Controllers
         {
             try
             {
-                var result = await restaurantService.UpdateRestaurentAsync(register);
+                var result = await _restaurantService.UpdateRestaurentAsync(register);
 
                 if (result == null)
                 {
-                    logger.LogWarning($"Failed to update the restaurant: {register.RestaurantName}");
+                    _logger.LogWarning($"Failed to update the restaurant: {register.RestaurantName}");
                     return BadRequest(new { message = "Failed to update the restaurant" });
                 }
 
@@ -99,12 +200,12 @@ namespace FoodOrderingServices.API.Controllers
             }
             catch (UnauthorizedAccessException exception)
             {
-                logger.LogWarning(exception, "Unauthorized access during restaurant update");
+                _logger.LogWarning(exception, "Unauthorized access during restaurant update");
                 return Unauthorized(new { message = "Invalid credentials provided for update" });
             }
             catch (Exception exception)
             {
-                logger.LogError(exception, $"Unexpected error while updating the restaurant: {register.RestaurantName}");
+                _logger.LogError(exception, $"Unexpected error while updating the restaurant: {register.RestaurantName}");
                 return StatusCode(500, new { message = "An error occurred during update of the restaurant" });
             }
         }
