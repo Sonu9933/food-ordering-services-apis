@@ -1,9 +1,9 @@
 using Asp.Versioning;
 using ConsumerEnpoints.Services;
-using Customer.API.CustomMiddleware;
 using Customer.Core.Contracts.Services;
 using Customer.Core.Services;
 using Customer.Infrastructure.Repositories;
+using FoodOrderingServices.API.CustomMiddleware;
 using FoodOrderingServices.Core.Contracts.Repositories;
 using FoodOrderingServices.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

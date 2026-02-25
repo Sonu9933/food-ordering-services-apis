@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Customer.API.CustomMiddleware
+namespace FoodOrderingServices.API.CustomMiddleware
 {
     public class ExceptionHandlingMiddleware
     {

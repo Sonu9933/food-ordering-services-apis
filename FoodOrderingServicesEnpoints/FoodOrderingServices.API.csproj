@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Consumer.Core\FoodOrderingServices.Core.csproj" />
-    <ProjectReference Include="..\Consumer.InfrsStructure\FoodOrderingServices.Infrastructure.csproj" />
+    <ProjectReference Include="..\FoodOrderingServices.Core\FoodOrderingServices.Core.csproj" />
+    <ProjectReference Include="..\FoodOrderingServices.InfrsStructure\FoodOrderingServices.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
