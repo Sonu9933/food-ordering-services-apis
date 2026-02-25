@@ -4,7 +4,7 @@ using FoodOrderingServices.Core.DTOs.Customer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace Customer.API.Controllers
+namespace FoodOrderingServices.API.Controllers
 {
     /// <summary>
     /// Handles customer authentication operations including login and registration.

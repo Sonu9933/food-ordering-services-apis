@@ -1,10 +1,10 @@
-﻿using Customer.API.Controllers;
-using Customer.Core.Contracts.Services;
+﻿using Customer.Core.Contracts.Services;
+using FoodOrderingServices.API.Controllers;
 using FoodOrderingServices.Core.DTOs.Customer;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Customer.UnitTests
+namespace FoodOrderingServices.UnitTests
 {
     internal class CustomerAuthControllerTest
     {
@@ -55,7 +55,7 @@ namespace Customer.UnitTests
                 Password = "Test@!@#123"
             };
 
-            var result = new FoodOrderingServices.Core.Entity.Customer()
+            var result = new Core.Entity.Customer()
             {
                 Email = registerRequest.Email,
                 CreatedAt = DateTime.UtcNow,
