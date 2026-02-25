@@ -52,9 +52,9 @@ namespace FoodOrderingServices.IntegrationTests
             return await Context.Set<T>().FindAsync(id);
         }
 
-        protected async Task<AuthResponse> AuthenticateUserAsync(string email, string password)
+        protected async Task<AuthenticationResponse> AuthenticateUserAsync(string email, string password)
         {
-            var loginRequest = new LoginRequest
+            var loginRequest = new LoginCustomerRequest
             {
                 Email = email,
                 Password = password
@@ -64,7 +64,7 @@ namespace FoodOrderingServices.IntegrationTests
 
             response.EnsureSuccessStatusCode();
 
-            var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            var authResponse = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
 
             // set token for subsequent requests
             Client.DefaultRequestHeaders.Authorization =
@@ -75,7 +75,7 @@ namespace FoodOrderingServices.IntegrationTests
 
         #region Additional Test Scaffolding
 
-        protected async Task<AuthResponse> RegisterAndAuthenticateAsync(
+        protected async Task<AuthenticationResponse> RegisterAndAuthenticateAsync(
             string? email = null,
             string? password = null,
             string? fullName = null)
@@ -84,7 +84,7 @@ namespace FoodOrderingServices.IntegrationTests
             password ??= "SecurePass123!";
             fullName ??= "Test User";
 
-            var registerRequest = new RegisterRequest
+            var registerRequest = new RegisterCustomerRequest
             {
                 Email = email,
                 Password = password,
@@ -94,7 +94,7 @@ namespace FoodOrderingServices.IntegrationTests
             var response = await Client.PostAsJsonAsync("/api/auth/register", registerRequest);
             response.EnsureSuccessStatusCode();
 
-            var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            var authResponse = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
 
             // Set token for subsequent requests
             Client.DefaultRequestHeaders.Authorization =

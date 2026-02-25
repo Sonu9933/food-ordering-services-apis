@@ -7,8 +7,8 @@ namespace FoodOrderingServices.Core.Contracts.Services
     {
         Task<IEnumerable<Restaurant>?> GetAllRestaurentsAsync();
         Task<Restaurant?> GetRestaurentByIdAsync(Guid restaurentId);
-        Task<Restaurant?> AddRestaurentAsync(RegisterRequest restaurent);
-        Task<Restaurant?> UpdateRestaurentAsync(RegisterRequest restaurent);
+        Task<Restaurant?> AddRestaurentAsync(AddRestaurantRequest restaurent);
+        Task<Restaurant?> UpdateRestaurentAsync(AddRestaurantRequest restaurent);
         Task<bool> DeleteRestaurentAsync(Guid restaurentId);
     }
 }

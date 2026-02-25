@@ -43,7 +43,7 @@ namespace FoodOrderingServices.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<string>> RestaurantRegistrationAsync(RegisterRequest register)
+        public async Task<ActionResult<string>> RestaurantRegistrationAsync(AddRestaurantRequest register)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace FoodOrderingServices.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<string>> UpdateRestaurantDetailsAsync(RegisterRequest register)
+        public async Task<ActionResult<string>> UpdateRestaurantDetailsAsync(AddRestaurantRequest register)
         {
             try
             {

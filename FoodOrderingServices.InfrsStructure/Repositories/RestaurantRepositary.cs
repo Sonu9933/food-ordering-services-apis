@@ -15,7 +15,7 @@ namespace FoodOrderingServices.Infrastructure.Repositories
             _applicationDbContext = applicationDbContext;
         }
 
-        public async Task<Restaurant?> AddRestaurentAsync(RegisterRequest registerRequest)
+        public async Task<Restaurant?> AddRestaurentAsync(AddRestaurantRequest registerRequest)
         {
             if(await _applicationDbContext
                 .Restaurants
@@ -72,7 +72,7 @@ namespace FoodOrderingServices.Infrastructure.Repositories
             return null;
         }
 
-        public async Task<Restaurant?> UpdateRestaurentAsync(RegisterRequest registerRequest)
+        public async Task<Restaurant?> UpdateRestaurentAsync(AddRestaurantRequest registerRequest)
         {
             var restaurant = await _applicationDbContext
                 .Restaurants

@@ -1,6 +1,6 @@
 ﻿namespace FoodOrderingServices.Core.DTOs.Customer
 {
-    public class RegisterRequest
+    public class RegisterCustomerRequest
     {
         public string ConsumerName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;

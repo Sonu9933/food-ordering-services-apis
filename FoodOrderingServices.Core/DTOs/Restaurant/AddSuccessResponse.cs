@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FoodOrderingServices.Core.DTOs.Restaurant
 {
-    public class Response
+    public class AddSuccessResponse
     {
     }
 }

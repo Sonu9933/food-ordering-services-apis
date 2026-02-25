@@ -4,7 +4,7 @@ namespace Customer.Core.Contracts.Services
 {
     public interface IAuthCustomerService
     {
-        Task<AuthResponse?> AuthenticateAsync(LoginRequest loginRequest);
-        Task<FoodOrderingServices.Core.Entity.Customer?> RegisterAsync(RegisterRequest registerRequest);
+        Task<AuthenticationResponse?> AuthenticateAsync(LoginCustomerRequest loginRequest);
+        Task<FoodOrderingServices.Core.Entity.Customer?> RegisterAsync(RegisterCustomerRequest registerRequest);
     }
 }

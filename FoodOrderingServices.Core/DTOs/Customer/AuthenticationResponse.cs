@@ -1,6 +1,6 @@
 ﻿namespace FoodOrderingServices.Core.DTOs.Customer
 {
-    public class AuthResponse
+    public class AuthenticationResponse
     {
         public string Token { get; set; } = string.Empty;
 

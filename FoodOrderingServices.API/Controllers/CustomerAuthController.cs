@@ -39,10 +39,10 @@ namespace FoodOrderingServices.API.Controllers
         /// <response code="500">An unexpected error occurred during login.</response>
         [ApiVersion(1)]
         [HttpPost("login-consumer")]
-        [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<AuthResponse>> LoginConsumerAsync(LoginRequest loginRequest)
+        public async Task<ActionResult<AuthenticationResponse>> LoginConsumerAsync(LoginCustomerRequest loginRequest)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace FoodOrderingServices.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<string>> ConsumerRegistrationAsync(RegisterRequest register)
+        public async Task<ActionResult<string>> ConsumerRegistrationAsync(RegisterCustomerRequest register)
         {
             try
             {

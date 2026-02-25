@@ -23,11 +23,11 @@ namespace FoodOrderingServices.UnitTests
         [Test]
         public async Task LoginConsumerAsync_WhenUserLoginSuccessfull_ReturnsUser()
         {
-            var loginRequest = new LoginRequest()
+            var loginRequest = new LoginCustomerRequest()
             { Email = "test@gmail.com",
              Password = "Test@!@#123"};
 
-            var result = new AuthResponse()
+            var result = new AuthenticationResponse()
             {
                 Email = loginRequest.Email,
                 ExpiresAt = DateTime.UtcNow,
@@ -48,7 +48,7 @@ namespace FoodOrderingServices.UnitTests
         [Test]
         public async Task CosumerRegistrationAsync_WhenUserRegisterSuccessfull_ReturnsMessage()
         {
-            var registerRequest = new RegisterRequest()
+            var registerRequest = new RegisterCustomerRequest()
             {
                 ConsumerName = "Test",
                 Email = "test@gmail.com",

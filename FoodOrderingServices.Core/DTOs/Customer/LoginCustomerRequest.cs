@@ -2,7 +2,7 @@
 
 namespace FoodOrderingServices.Core.DTOs.Customer
 {
-    public class LoginRequest
+    public class LoginCustomerRequest
     {
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email format")]

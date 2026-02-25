@@ -5,7 +5,10 @@ using Customer.Core.Services;
 using Customer.Infrastructure.Repositories;
 using FoodOrderingServices.API.CustomMiddleware;
 using FoodOrderingServices.Core.Contracts.Repositories;
+using FoodOrderingServices.Core.Contracts.Services;
+using FoodOrderingServices.Core.Services;
 using FoodOrderingServices.Infrastructure.Data;
+using FoodOrderingServices.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -114,8 +117,10 @@ namespace FoodOrderingServices.API
             });
 
             builder.Services.AddScoped<IAuthCustomerService, AuthConsumerService>();
+            builder.Services.AddScoped<IRestaurantService, RestaurantService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
             builder.Services.AddScoped<ICustomerRepositary, CustomerRepositary>();
+            builder.Services.AddScoped<IRestaurantRepositary, RestaurantRepositary>();
 
             var app = builder.Build();
 

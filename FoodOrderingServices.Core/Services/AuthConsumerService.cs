@@ -15,7 +15,7 @@ namespace ConsumerEnpoints.Services
             _jwtTokenService = jwtTokenService;
         }
 
-        public async Task<AuthResponse?> AuthenticateAsync(LoginRequest loginRequest)
+        public async Task<AuthenticationResponse?> AuthenticateAsync(LoginCustomerRequest loginRequest)
         {
             var customer = await _customerAuthRepositary.LoginCustomerAsync(loginRequest.Email, loginRequest.Password);
             if (customer == null)
@@ -23,7 +23,7 @@ namespace ConsumerEnpoints.Services
                 return null;
             }
 
-            return new AuthResponse()
+            return new AuthenticationResponse()
             {
                 Email = customer.Email,
                 Id = customer.CustomerId,
@@ -33,7 +33,7 @@ namespace ConsumerEnpoints.Services
             };
         }
 
-        public async Task<FoodOrderingServices.Core.Entity.Customer?> RegisterAsync(RegisterRequest registerRequest)
+        public async Task<FoodOrderingServices.Core.Entity.Customer?> RegisterAsync(RegisterCustomerRequest registerRequest)
         {
             var registerCustomer = await _customerAuthRepositary
                 .RegisterCustomerAsync(registerRequest.ConsumerName, 

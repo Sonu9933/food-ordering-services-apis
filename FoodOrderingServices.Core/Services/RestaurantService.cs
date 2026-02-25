@@ -14,7 +14,7 @@ namespace FoodOrderingServices.Core.Services
             _restaurantRepositary = restaurantRepositary;
         }
 
-        public async Task<Restaurant?> AddRestaurentAsync(RegisterRequest restaurent)
+        public async Task<Restaurant?> AddRestaurentAsync(AddRestaurantRequest restaurent)
         {
             var result = await _restaurantRepositary.AddRestaurentAsync(restaurent);
 
@@ -54,7 +54,7 @@ namespace FoodOrderingServices.Core.Services
                 return result;
         }
 
-        public async Task<Restaurant?> UpdateRestaurentAsync(RegisterRequest restaurent)
+        public async Task<Restaurant?> UpdateRestaurentAsync(AddRestaurantRequest restaurent)
         {
             var result = await _restaurantRepositary.UpdateRestaurentAsync(restaurent);
 
