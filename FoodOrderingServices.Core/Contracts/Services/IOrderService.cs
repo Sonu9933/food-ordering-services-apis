@@ -1,11 +1,11 @@
 ﻿using FoodOrderingServices.Core.DTOs.Order;
 using FoodOrderingServices.Core.Entity;
 
-namespace FoodOrderingServices.Core.Contracts.Repositories
+namespace FoodOrderingServices.Core.Contracts.Services
 {
-    public interface IOrderRepositary
+    public interface IOrderService
     {
-        Task<Order> CreateOrderAsync(CreateOrderRequest order);
+        Task<OrderSuccessResponse> CreateOrderAsync(CreateOrderRequest order);
         Task<Order?> GetOrderByIdAsync(Guid orderId);
         Task<IEnumerable<Order>?> GetOrdersByCustomerIdAsync(Guid customerId);
     }

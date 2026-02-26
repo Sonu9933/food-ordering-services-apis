@@ -1,12 +1,66 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Customer.Core.Enum;
+using FoodOrderingServices.Core.Contracts.Repositories;
+using FoodOrderingServices.Core.DTOs.Order;
+using FoodOrderingServices.Core.Entity;
+using FoodOrderingServices.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodOrderingServices.Infrastructure.Repositories
 {
-    internal class OrderRepositary
+    public class OrderRepositary : IOrderRepositary
     {
+        private readonly ApplicationDbContext _applicationDbContext;
+        public OrderRepositary(ApplicationDbContext applicationDbContext)
+        {
+            _applicationDbContext = applicationDbContext;
+        }
+
+        public async Task<Order> CreateOrderAsync(CreateOrderRequest order)
+        {
+            var orderEntity = new Order
+            {
+                OrderID = Guid.NewGuid(),
+                CustomerID = order.CustomerId,
+                RestaurantID = order.RestaurantID,
+                Status = OrderStatus.Confirmed,
+                OrderDate = DateTime.UtcNow,
+                TotalAmount = order.OrderItems.Sum(item => item.Quantity * item.Price)
+            };
+
+            var orderDetails = order.OrderItems.Select(item => new OrderDetail
+            {
+                OrderID = orderEntity.OrderID,
+                OrderDetailID = Guid.NewGuid(),
+                ItemID = item.ItemID,
+                Quantity = item.Quantity,
+                UnitPrice = item.Price
+            }).ToList();
+
+            await _applicationDbContext.Orders.AddAsync(orderEntity);
+            foreach (var detail in orderDetails)
+            {
+                await _applicationDbContext.OrderDetails.AddAsync(detail);
+            }
+
+            await _applicationDbContext.SaveChangesAsync();
+            return orderEntity;
+        }
+
+        public async Task<Order?> GetOrderByIdAsync(Guid orderId)
+        {
+            var order = await _applicationDbContext.Orders
+                .Include(o => o.OrderDetails)
+                .FirstOrDefaultAsync(o => o.OrderID == orderId);
+
+            return order;
+        }
+        public async Task<IEnumerable<Order>?> GetOrdersByCustomerIdAsync(Guid customerId)
+        {
+            var orders = await _applicationDbContext.Orders
+                .Where(o => o.CustomerID == customerId)
+                .ToListAsync();
+
+            return orders.Count > 0 ? orders : Enumerable.Empty<Order>();
+        }
     }
 }

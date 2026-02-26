@@ -57,9 +57,11 @@ namespace FoodOrderingServices.Infrastructure.Repositories
             return false;
         }
 
-        public Task<IEnumerable<Restaurant>> GetAllRestaurentsAsync()
+        public async Task<IEnumerable<Restaurant>> GetAllRestaurentsAsync()
         {
-            return Task.FromResult(_applicationDbContext.Restaurants.AsEnumerable());
+            var restaurants = await _applicationDbContext.Restaurants.ToListAsync();
+
+            return restaurants.Count > 0 ? restaurants : Enumerable.Empty<Restaurant>();
         }
 
         public async Task<Restaurant?> GetRestaurentByIdAsync(Guid restaurentId)
