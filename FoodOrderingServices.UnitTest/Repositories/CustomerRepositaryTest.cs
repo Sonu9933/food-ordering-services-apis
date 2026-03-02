@@ -1,4 +1,4 @@
-﻿using Customer.Infrastructure.Repositories;
+﻿using FoodOrderingServices.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Microsoft.Extensions.Caching.Distributed;
