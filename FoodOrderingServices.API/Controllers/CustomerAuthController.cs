@@ -1,5 +1,5 @@
 ﻿using Asp.Versioning;
-using Customer.Core.Contracts.Services;
+using FoodOrderingServices.Core.Contracts.Services;
 using FoodOrderingServices.Core.DTOs.Customer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;

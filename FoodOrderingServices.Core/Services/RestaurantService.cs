@@ -5,6 +5,14 @@ using FoodOrderingServices.Core.Entity;
 
 namespace FoodOrderingServices.Core.Services
 {
+    /// <summary>
+    /// Provides operations for managing restaurant data, including creating, updating, deleting, and retrieving
+    /// restaurant information asynchronously.
+    /// </summary>
+    /// <remarks>The RestaurantService coordinates with the underlying restaurant repository to perform CRUD
+    /// operations on restaurant entities. Methods return either domain entities or data transfer objects (DTOs) as
+    /// appropriate for client consumption. All operations are asynchronous to support scalable application
+    /// scenarios.</remarks>
     public class RestaurantService : IRestaurantService
     {
         private readonly IRestaurantRepositary _restaurantRepositary;

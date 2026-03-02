@@ -1,5 +1,5 @@
-﻿using Customer.Core.Contracts.Services;
-using FoodOrderingServices.API.Controllers;
+﻿using FoodOrderingServices.API.Controllers;
+using FoodOrderingServices.Core.Contracts.Services;
 using FoodOrderingServices.Core.DTOs.Customer;
 using Microsoft.Extensions.Logging;
 using Moq;

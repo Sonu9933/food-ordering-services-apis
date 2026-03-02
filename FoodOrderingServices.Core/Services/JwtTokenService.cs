@@ -1,4 +1,4 @@
-﻿using Customer.Core.Contracts.Services;
+﻿using FoodOrderingServices.Core.Contracts.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

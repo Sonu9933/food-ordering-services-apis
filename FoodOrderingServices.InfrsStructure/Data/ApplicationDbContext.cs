@@ -3,6 +3,15 @@ using FoodOrderingServices.Core.Entity;
 
 namespace FoodOrderingServices.Infrastructure.Data
 {
+    /// <summary>
+    /// Represents the Entity Framework Core database context for the food ordering application, providing access to
+    /// customers, orders, order details, restaurants, and menu items.
+    /// </summary>
+    /// <remarks>This context defines entity sets for core business objects and configures entity
+    /// relationships and indexes using the Fluent API. It should be registered with the application's dependency
+    /// injection container to enable data access throughout the application.</remarks>
+    /// <param name="options">The options used to configure the database context, including database provider, connection string, and other
+    /// context-specific settings.</param>
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
     {
         public virtual DbSet<Core.Entity.Customer> Customers { get; set; }

@@ -3,8 +3,14 @@ using Microsoft.Extensions.Caching.Distributed;
 using FoodOrderingServices.Core.Contracts.Repositories;
 using FoodOrderingServices.Infrastructure.Data;
 
-namespace Customer.Infrastructure.Repositories
+namespace FoodOrderingServices.Infrastructure.Repositories
 {
+    /// <summary>
+    /// Provides methods for managing customer data, including login and registration functionalities.
+    /// </summary>
+    /// <remarks>This repository interacts with both a database context and a distributed cache to optimize
+    /// customer login operations. It ensures that customer data is cached for quick access and updates the last login
+    /// time upon successful login.</remarks>
     public class CustomerRepositary : ICustomerRepositary
     {
         private readonly ApplicationDbContext _applicationDbContext;
@@ -16,13 +22,13 @@ namespace Customer.Infrastructure.Repositories
             _distributedCache = distributedCache;
         }
 
-        public async Task<FoodOrderingServices.Core.Entity.Customer?> LoginCustomerAsync(string email, string password)
+        public async Task<Core.Entity.Customer?> LoginCustomerAsync(string email, string password)
         {
             var cacheCustomer = await _distributedCache.GetStringAsync(email);
 
             if (cacheCustomer != null)
             {
-                var cachedCustomer = System.Text.Json.JsonSerializer.Deserialize<FoodOrderingServices.Core.Entity.Customer>(cacheCustomer);
+                var cachedCustomer = System.Text.Json.JsonSerializer.Deserialize<Core.Entity.Customer>(cacheCustomer);
                 if (cachedCustomer != null && BCrypt.Net.BCrypt.Verify(password, cachedCustomer.PasswordHash))
                 {
                     return cachedCustomer;
@@ -51,7 +57,7 @@ namespace Customer.Infrastructure.Repositories
             return customer;
         }
 
-        public async Task<FoodOrderingServices.Core.Entity.Customer?> RegisterCustomerAsync(string customerName, 
+        public async Task<Core.Entity.Customer?> RegisterCustomerAsync(string customerName, 
             string email, 
             string password)
         {
@@ -60,7 +66,7 @@ namespace Customer.Infrastructure.Repositories
                 return null;
             }
 
-            var customer = new FoodOrderingServices.Core.Entity.Customer
+            var customer = new Core.Entity.Customer
             {
                 CustomerId = new Guid(),
                 CustomerName = customerName,

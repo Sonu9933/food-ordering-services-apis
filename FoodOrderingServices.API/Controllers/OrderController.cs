@@ -1,12 +1,11 @@
 ﻿using FoodOrderingServices.Core.Contracts.Services;
-using FoodOrderingServices.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace FoodOrderingServices.API.Controllers
 {
     /// <summary>
-    /// Handles restaurant registration and update operations.
+    /// Controller for managing customer orders, including creating, updating, and retrieving order information.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -28,7 +27,5 @@ namespace FoodOrderingServices.API.Controllers
             _orderService = orderService;
             _logger = logger;
         }
-
-
     }
 }

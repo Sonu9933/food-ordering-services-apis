@@ -7,6 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodOrderingServices.Infrastructure.Repositories
 {
+    /// <summary>
+    /// Provides methods for creating and retrieving orders from the underlying database in an asynchronous manner.
+    /// </summary>
+    /// <remarks>This repository is intended for use in web applications to manage order data efficiently. It
+    /// abstracts the data access logic for orders, supporting asynchronous operations to improve scalability and
+    /// responsiveness. All methods interact with the application's database context and are designed to be used as part
+    /// of a dependency injection setup.</remarks>
     public class OrderRepositary : IOrderRepositary
     {
         private readonly ApplicationDbContext _applicationDbContext;

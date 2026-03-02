@@ -1,5 +1,5 @@
-﻿using Customer.Core.Contracts.Services;
-using FoodOrderingServices.Core.Contracts.Repositories;
+﻿using FoodOrderingServices.Core.Contracts.Repositories;
+using FoodOrderingServices.Core.Contracts.Services;
 using FoodOrderingServices.Core.DTOs.Customer;
 
 namespace ConsumerEnpoints.Services

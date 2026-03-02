@@ -6,6 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodOrderingServices.Infrastructure.Repositories
 {
+    /// <summary>
+    /// Provides methods for managing restaurant data, including adding, deleting, retrieving, and updating restaurant
+    /// information.
+    /// </summary>
+    /// <remarks>This repository interacts with the underlying database context to perform CRUD operations on
+    /// restaurant entities. It ensures that restaurant names and contact numbers are unique when adding new
+    /// restaurants. The methods are asynchronous and return tasks to allow for non-blocking operations.</remarks>
     public class RestaurantRepositary : IRestaurantRepositary
     {
         private readonly ApplicationDbContext _applicationDbContext;

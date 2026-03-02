@@ -5,6 +5,13 @@ using FoodOrderingServices.Core.Entity;
 
 namespace FoodOrderingServices.Core.Services
 {
+    /// <summary>
+    /// Provides operations for creating and retrieving orders within the system.
+    /// </summary>
+    /// <remarks>The OrderService interacts with an order repository to manage order data asynchronously. It
+    /// is designed to be used in scenarios where order creation and retrieval are required, such as processing customer
+    /// orders or displaying order history. Ensure that input data is validated before invoking service methods. This
+    /// class is not thread-safe; if used concurrently, external synchronization is required.</remarks>
     public class OrderService : IOrderService
     {
         private readonly IOrderRepositary _orderRepositary;
