@@ -133,6 +133,8 @@ namespace FoodOrderingServices.API
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
             builder.Services.AddScoped<ICustomerRepositary, CustomerRepositary>();
             builder.Services.AddScoped<IRestaurantRepositary, RestaurantRepositary>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IOrderRepositary, OrderRepositary>();
 
 
             // Resilience
