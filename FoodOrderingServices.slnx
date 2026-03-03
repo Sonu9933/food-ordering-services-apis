@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
+    <File Path="README.md" />
   </Folder>
   <Project Path="FoodOrderingServices.Core/FoodOrderingServices.Core.csproj" Id="3e71d1e2-6724-4293-a3fb-0d611ceaff3c" />
   <Project Path="FoodOrderingServices.InfrsStructure/FoodOrderingServices.Infrastructure.csproj" Id="b52627bf-d780-4976-8a36-807a5e1d61e9" />
