@@ -2,10 +2,10 @@
 
 ## Project Overview
 
-- ** Customer Registration/Login
-- ** Restaurant Registration
-- ** Place Order via Restaurant
-- ** Payments (In progress)
+- ** Customer Registration/Login **
+- ** Restaurant Registration **
+- ** Place Order via Restaurant **
+- ** Payments (In progress) **
 
 ## Architecture
 
