@@ -47,6 +47,17 @@ namespace FoodOrderingServices.API
                     options.JsonSerializerOptions.ReferenceHandler =
                         System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
 
+            // CORS: allow the React dev server to call the API
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("ReactApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -178,6 +189,9 @@ namespace FoodOrderingServices.API
             }
 
             app.UseHttpsRedirection();
+
+            // Enable CORS for React dev server
+            app.UseCors("ReactApp");
 
             // Enable authentication and authorization middleware
             app.UseAuthorization();

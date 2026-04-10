@@ -103,5 +103,14 @@ namespace FoodOrderingServices.Infrastructure.Repositories
 
             return restaurant;
         }
+
+        public async Task<IEnumerable<FoodOrderingServices.Core.Entity.MenuItems>> GetMenuItemsByRestaurantIdAsync(Guid restaurantId)
+        {
+            var items = await _applicationDbContext.MenuItems
+                .Where(m => m.RestaurantID == restaurantId)
+                .ToListAsync();
+
+            return items.Count > 0 ? items : Enumerable.Empty<FoodOrderingServices.Core.Entity.MenuItems>();
+        }
     }
 }

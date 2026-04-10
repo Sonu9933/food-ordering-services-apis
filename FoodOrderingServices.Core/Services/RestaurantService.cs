@@ -89,5 +89,23 @@ namespace FoodOrderingServices.Core.Services
                 ContactNumber = entity.ContactNumber,
             };
         }
+
+        public async Task<IEnumerable<MenuItemDTO>?> GetMenuItemsByRestaurantIdAsync(Guid restaurantId)
+        {
+            var items = await _restaurantRepositary.GetMenuItemsByRestaurantIdAsync(restaurantId);
+
+            if (items == null)
+                return null;
+
+            return items.Select(m => new MenuItemDTO
+            {
+                ItemID = m.ItemID,
+                RestaurantID = m.RestaurantID,
+                ItemName = m.ItemName,
+                Description = m.Description,
+                Price = m.Price,
+                Category = m.Category,
+            });
+        }
     }
 }

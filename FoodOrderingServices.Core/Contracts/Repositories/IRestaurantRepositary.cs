@@ -18,5 +18,6 @@ namespace FoodOrderingServices.Core.Contracts.Repositories
             Task<Restaurant?> AddRestaurentAsync(AddRestaurantRequest registerRequest);
             Task<Restaurant?> UpdateRestaurentAsync(AddRestaurantRequest registerRequest);
             Task<bool> DeleteRestaurentAsync(Guid restaurentId);
+            Task<IEnumerable<FoodOrderingServices.Core.Entity.MenuItems>> GetMenuItemsByRestaurantIdAsync(Guid restaurantId);
     }
 }

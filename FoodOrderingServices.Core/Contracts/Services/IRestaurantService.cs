@@ -16,5 +16,6 @@ namespace FoodOrderingServices.Core.Contracts.Services
         Task<Restaurant?> AddRestaurentAsync(AddRestaurantRequest restaurent);
         Task<Restaurant?> UpdateRestaurentAsync(AddRestaurantRequest restaurent);
         Task<bool> DeleteRestaurentAsync(Guid restaurentId);
+        Task<IEnumerable<MenuItemDTO>?> GetMenuItemsByRestaurantIdAsync(Guid restaurantId);
     }
 }

@@ -209,5 +209,37 @@ namespace FoodOrderingServices.API.Controllers
                 return StatusCode(500, new { message = "An error occurred during update of the restaurant" });
             }
         }
+
+        /// <summary>
+        /// Get all menu items for a specific restaurant.
+        /// </summary>
+        /// <param name="restaurantId">The unique identifier of the restaurant.</param>
+        /// <returns>A list of menu items or an error message.</returns>
+        /// <response code="200">Menu items retrieved successfully.</response>
+        /// <response code="404">No menu items found for the restaurant.</response>
+        /// <response code="500">An unexpected error occurred.</response>
+        [HttpGet("get-menu-items/{restaurantId}")]
+        [ProducesResponseType(typeof(IEnumerable<FoodOrderingServices.Core.DTOs.Restaurant.MenuItemDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetMenuItemsAsync(Guid restaurantId)
+        {
+            try
+            {
+                var result = await _restaurantService.GetMenuItemsByRestaurantIdAsync(restaurantId);
+
+                if (result == null || !result.Any())
+                {
+                    return NotFound(new { message = $"No menu items found for restaurant {restaurantId}" });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Unexpected error while fetching menu items for restaurant {RestaurantId}", restaurantId);
+                return StatusCode(500, new { message = "An error occurred while fetching menu items" });
+            }
+        }
     }
 }
