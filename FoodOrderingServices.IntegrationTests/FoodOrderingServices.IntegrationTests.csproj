@@ -2,29 +2,45 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
+    <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
+
+    <!--
+      Required by WebApplicationFactory<T>.
+      Instructs MSBuild to emit testhost.deps.json into the output directory so
+      the in-process test server can resolve the API project's assembly graph.
+      Without this every test fails with "Can't find testhost.deps.json".
+    -->
+    <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.3.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.23" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.23" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="xunit" Version="2.9.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk"                  Version="17.9.0" />
+    <PackageReference Include="xunit"                                   Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio"               Version="2.8.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"        Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory"  Version="8.0.0" />
+    <PackageReference Include="coverlet.collector"                      Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FoodOrderingServices.API\FoodOrderingServices.API.csproj" />
+    <ProjectReference Include="..\FoodOrderingServices.Core\FoodOrderingServices.Core.csproj" />
+    <!--
+      Folder on disk : FoodOrderingServices.InfrsStructure   ← abbreviated spelling
+      .csproj file   : FoodOrderingServices.Infrastructure.csproj
+      Confirmed by:
+        - Build log  : "Restored ...FoodOrderingServices.InfrsStructure\FoodOrderingServices.Infrastructure.csproj"
+        - IDE state  : open files include "FoodOrderingServices.InfrsStructure\Repositories\CustomerRepositary.cs"
+    -->
     <ProjectReference Include="..\FoodOrderingServices.InfrsStructure\FoodOrderingServices.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.Testing.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

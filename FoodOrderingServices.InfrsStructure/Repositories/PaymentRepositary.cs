@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FoodOrderingServices.Core.Contracts.Repositories;
 
 namespace FoodOrderingServices.Infrastructure.Repositories
 {
-    internal class PaymentRepositary
+    public class PaymentRepositary : IPaymentRepositary
     {
+        public Task<bool> ProcessPaymentAsync()
+        {
+            // Hardcoded success
+            return Task.FromResult(true);
+        }
     }
 }

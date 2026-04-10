@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FoodOrderingServices.Core.Contracts.Repositories
+﻿namespace FoodOrderingServices.Core.Contracts.Repositories
 {
-    internal interface IPaymentRepositary
+    public interface IPaymentRepositary
     {
+        Task<bool> ProcessPaymentAsync();
     }
 }
