@@ -3,24 +3,36 @@
 namespace FoodOrderingServices.Core.Entity
 {
     /// <summary>
-    /// Represents a menu item offered by a restaurant, including its identifying information, description, price, and
-    /// category.
+    /// Represents a single item on a restaurant's menu.
     /// </summary>
-    /// <remarks>Each instance of this class corresponds to a single menu item associated with a specific
-    /// restaurant. The menu item is uniquely identified by the ItemID property and is linked to a restaurant through
-    /// the RestaurantID property. This class is typically used to manage and display menu options within a food
-    /// ordering or restaurant management system.</remarks>
+    /// <remarks>
+    /// Menu items belong to exactly one <see cref="Restaurant"/> and are cascade-deleted
+    /// when their parent restaurant is removed.
+    /// They are referenced by <see cref="OrderDetail"/> records to link ordered items
+    /// to their catalogue definitions.
+    /// </remarks>
     public class MenuItems
     {
+        /// <summary>Unique identifier for the menu item (primary key).</summary>
         [Key]
         public Guid ItemID { get; set; }
+
+        /// <summary>Foreign key linking this item to its owning <see cref="Restaurant"/>.</summary>
         public Guid RestaurantID { get; set; }
+
+        /// <summary>Customer-visible name of the dish or product (e.g., "Margherita Pizza").</summary>
         public string ItemName { get; set; }
+
+        /// <summary>Optional description providing ingredient or preparation details.</summary>
         public string Description { get; set; }
+
+        /// <summary>Unit price of the item in the smallest currency unit (e.g., pence/cents).</summary>
         public int Price { get; set; }
+
+        /// <summary>Menu category the item belongs to (e.g., "Starters", "Mains", "Desserts").</summary>
         public string Category { get; set; }
 
-        // Navigation properties
+        /// <summary>Navigation property — the restaurant that owns this menu item.</summary>
         public Restaurant Restaurant { get; set; }
     }
 }
