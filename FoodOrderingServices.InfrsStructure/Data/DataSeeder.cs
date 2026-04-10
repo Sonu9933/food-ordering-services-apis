@@ -98,7 +98,7 @@ namespace FoodOrderingServices.Infrastructure.Data
             }
         }
 
-        // ── Customers ─────────────────────────────────────────────────────────────
+        // Customers
 
         private static async Task SeedCustomersAsync(ApplicationDbContext context, ILogger logger)
         {
@@ -152,7 +152,7 @@ namespace FoodOrderingServices.Infrastructure.Data
             logger.LogInformation("Seeded {Count} customers.", customers.Count);
         }
 
-        // ── Restaurants ───────────────────────────────────────────────────────────
+        // Restaurants
 
         private static async Task SeedRestaurantsAsync(ApplicationDbContext context, ILogger logger)
         {
@@ -200,7 +200,7 @@ namespace FoodOrderingServices.Infrastructure.Data
             logger.LogInformation("Seeded {Count} restaurants.", restaurants.Count);
         }
 
-        // ── Menu Items ────────────────────────────────────────────────────────────
+        // Menu Items
 
         private static async Task SeedMenuItemsAsync(ApplicationDbContext context, ILogger logger)
         {
@@ -307,7 +307,7 @@ namespace FoodOrderingServices.Infrastructure.Data
             logger.LogInformation("Seeded {Count} menu items.", menuItems.Count);
         }
 
-        // ── Orders ────────────────────────────────────────────────────────────────
+        // Orders
 
         private static async Task SeedOrdersAsync(ApplicationDbContext context, ILogger logger)
         {
@@ -355,7 +355,7 @@ namespace FoodOrderingServices.Infrastructure.Data
             logger.LogInformation("Seeded {Count} orders.", orders.Count);
         }
 
-        // ── Order Details ─────────────────────────────────────────────────────────
+        // Order Details
 
         private static async Task SeedOrderDetailsAsync(ApplicationDbContext context, ILogger logger)
         {
