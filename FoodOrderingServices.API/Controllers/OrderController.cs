@@ -1,4 +1,5 @@
-﻿using FoodOrderingServices.Core.Contracts.Services;
+﻿using Asp.Versioning;
+using FoodOrderingServices.Core.Contracts.Services;
 using FoodOrderingServices.Core.DTOs.Order;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -8,8 +9,9 @@ namespace FoodOrderingServices.API.Controllers
     /// <summary>
     /// Controller for managing customer orders, including creating, updating, and retrieving order information.
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/v{v:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion(1)]
     [EnableRateLimiting("limiting")]
     public class OrderController : ControllerBase
     {
@@ -34,10 +36,10 @@ namespace FoodOrderingServices.API.Controllers
         /// </summary>
         /// <param name="orderRequest">The order registration details.</param>
         /// <returns>A message indicating successful registration or an error message.</returns>
-        /// <response code="200">Restaurant registered successfully.</response>
-        /// <response code="400">Restaurant registration failed.</response>
+        /// <response code="200">Order placed successfully.</response>
+        /// <response code="400">Order creation failed.</response>
         /// <response code="401">Unauthorized access - invalid credentials.</response>
-        /// <response code="500">An unexpected error occurred during registration.</response>
+        /// <response code="500">An unexpected error occurred during order creation.</response>
         [HttpPost]
         [Route("place-order")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -71,7 +73,7 @@ namespace FoodOrderingServices.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, $"Unexpected error while creating an order" + exception.Message);
+                _logger.LogError(exception, "Unexpected error while creating an order {Message}", exception.Message);
                 return StatusCode(500, new { message = "An error while creating an order" });
             }
         }
@@ -81,10 +83,10 @@ namespace FoodOrderingServices.API.Controllers
         /// </summary>
         /// <param name="orderId">The id of an order.</param>
         /// <returns>A message indicating order details or an error message.</returns>
-        /// <response code="200">Restaurant registered successfully.</response>
-        /// <response code="400">Restaurant registration failed.</response>
+        /// <response code="200">Order retrieved successfully.</response>
+        /// <response code="400">Order not found.</response>
         /// <response code="401">Unauthorized access - invalid credentials.</response>
-        /// <response code="500">An unexpected error occurred during registration.</response>
+        /// <response code="500">An unexpected error occurred.</response>
         [HttpGet]
         [Route("get-order-detail-orderId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -111,20 +113,20 @@ namespace FoodOrderingServices.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, $"Unexpected error while retrieving order details" + exception.Message);
+                _logger.LogError(exception, "Unexpected error while retrieving order details {Message}", exception.Message);
                 return StatusCode(500, new { message = "An error while retrieving order details" });
             }
         }
 
         /// <summary>
-        /// Get order detail via an customer id.
+        /// Get order detail via a customer id.
         /// </summary>
-        /// <param name="customerId">The id of an order.</param>
+        /// <param name="customerId">The id of the customer.</param>
         /// <returns>A message indicating orders with details or an error message.</returns>
-        /// <response code="200">Restaurant registered successfully.</response>
-        /// <response code="400">Restaurant registration failed.</response>
+        /// <response code="200">Orders retrieved successfully.</response>
+        /// <response code="400">Orders not found.</response>
         /// <response code="401">Unauthorized access - invalid credentials.</response>
-        /// <response code="500">An unexpected error occurred during registration.</response>
+        /// <response code="500">An unexpected error occurred.</response>
         [HttpGet]
         [Route("get-order-detail-customerId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -151,7 +153,7 @@ namespace FoodOrderingServices.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, $"Unexpected error while retrieving order details" + exception.Message);
+                _logger.LogError(exception, "Unexpected error while retrieving order details {Message}", exception.Message);
                 return StatusCode(500, new { message = "An error while retrieving order details" });
             }
         }

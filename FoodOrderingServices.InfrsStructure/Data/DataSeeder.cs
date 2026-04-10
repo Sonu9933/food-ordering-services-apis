@@ -68,7 +68,6 @@ namespace FoodOrderingServices.Infrastructure.Data
 
             try
             {
-                // Ensure the database schema is up-to-date
                 await context.Database.MigrateAsync();
 
                 await SeedCustomersAsync(context, logger);
@@ -79,14 +78,27 @@ namespace FoodOrderingServices.Infrastructure.Data
 
                 logger.LogInformation("Database seeding completed successfully.");
             }
+            catch (DbUpdateException ex)
+            {
+                // Unwrap the full exception chain to surface the exact SQL error
+                var inner = ex.InnerException;
+                while (inner is not null)
+                {
+                    logger.LogError("Inner exception: {Message}", inner.Message);
+                    inner = inner.InnerException;
+                }
+
+                logger.LogError(ex, "DbUpdateException while seeding. See inner exception messages above for the SQL error.");
+                throw;
+            }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while seeding the database.");
+                logger.LogError(ex, "An unexpected error occurred while seeding the database.");
                 throw;
             }
         }
 
-        // Customers
+        // ── Customers ─────────────────────────────────────────────────────────────
 
         private static async Task SeedCustomersAsync(ApplicationDbContext context, ILogger logger)
         {
@@ -100,42 +112,47 @@ namespace FoodOrderingServices.Infrastructure.Data
             {
                 new()
                 {
-                    CustomerId    = _customer1Id,
-                    CustomerName  = "Alice Johnson",
-                    Email         = "alice.johnson@example.com",
-                    PasswordHash  = BCrypt.Net.BCrypt.HashPassword("Password@123"),
-                    CreatedAt     = new DateTime(2024, 1, 10, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt     = new DateTime(2024, 1, 10, 0, 0, 0, DateTimeKind.Utc),
-                    LastLogin     = new DateTime(2024, 6, 1, 9, 30, 0, DateTimeKind.Utc)
+                    CustomerId   = _customer1Id,
+                    CustomerName = "Alice Johnson",
+                    Email        = "alice.johnson@example.com",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password@123"),
+                    CreatedAt    = new DateTime(2024, 1, 10, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt    = new DateTime(2024, 1, 10, 0, 0, 0, DateTimeKind.Utc),
+                    LastLogin    = new DateTime(2024, 6, 1, 9, 30, 0, DateTimeKind.Utc)
                 },
                 new()
                 {
-                    CustomerId    = _customer2Id,
-                    CustomerName  = "Bob Martinez",
-                    Email         = "bob.martinez@example.com",
-                    PasswordHash  = BCrypt.Net.BCrypt.HashPassword("Password@456"),
-                    CreatedAt     = new DateTime(2024, 2, 15, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt     = new DateTime(2024, 2, 15, 0, 0, 0, DateTimeKind.Utc),
-                    LastLogin     = new DateTime(2024, 6, 5, 14, 0, 0, DateTimeKind.Utc)
+                    CustomerId   = _customer2Id,
+                    CustomerName = "Bob Martinez",
+                    Email        = "bob.martinez@example.com",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password@456"),
+                    CreatedAt    = new DateTime(2024, 2, 15, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt    = new DateTime(2024, 2, 15, 0, 0, 0, DateTimeKind.Utc),
+                    LastLogin    = new DateTime(2024, 6, 5, 14, 0, 0, DateTimeKind.Utc)
                 },
                 new()
                 {
-                    CustomerId    = _customer3Id,
-                    CustomerName  = "Carol Smith",
-                    Email         = "carol.smith@example.com",
-                    PasswordHash  = BCrypt.Net.BCrypt.HashPassword("Password@789"),
-                    CreatedAt     = new DateTime(2024, 3, 20, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt     = new DateTime(2024, 3, 20, 0, 0, 0, DateTimeKind.Utc),
-                    LastLogin     = null
+                    CustomerId   = _customer3Id,
+                    CustomerName = "Carol Smith",
+                    Email        = "carol.smith@example.com",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password@789"),
+                    CreatedAt    = new DateTime(2024, 3, 20, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt    = new DateTime(2024, 3, 20, 0, 0, 0, DateTimeKind.Utc),
+                    LastLogin    = null
                 }
             };
 
             await context.Customers.AddRangeAsync(customers);
             await context.SaveChangesAsync();
+
+            // Clear the change tracker so previously saved entities do not interfere
+            // with fixup logic when inserting the next batch of entities.
+            context.ChangeTracker.Clear();
+
             logger.LogInformation("Seeded {Count} customers.", customers.Count);
         }
 
-        // Restaurants
+        // ── Restaurants ───────────────────────────────────────────────────────────
 
         private static async Task SeedRestaurantsAsync(ApplicationDbContext context, ILogger logger)
         {
@@ -149,39 +166,41 @@ namespace FoodOrderingServices.Infrastructure.Data
             {
                 new()
                 {
-                    RestaurantID    = _restaurant1Id,
-                    RestaurantName  = "Spice Garden",
-                    Location        = "12 Curry Lane, Manchester, M1 2AB",
-                    ContactNumber   = "0161123456",
-                    CreatedAt       = new DateTime(2023, 6, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt       = new DateTime(2023, 6, 1, 0, 0, 0, DateTimeKind.Utc)
+                    RestaurantID   = _restaurant1Id,
+                    RestaurantName = "Spice Garden",
+                    Location       = "12 Curry Lane, Manchester, M1 2AB",
+                    ContactNumber  = "0161123456",
+                    CreatedAt      = new DateTime(2023, 6, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt      = new DateTime(2023, 6, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new()
                 {
-                    RestaurantID    = _restaurant2Id,
-                    RestaurantName  = "Burger Hub",
-                    Location        = "45 Grill Street, Birmingham, B1 3CD",
-                    ContactNumber   = "0121987654",
-                    CreatedAt       = new DateTime(2023, 7, 15, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt       = new DateTime(2023, 7, 15, 0, 0, 0, DateTimeKind.Utc)
+                    RestaurantID   = _restaurant2Id,
+                    RestaurantName = "Burger Hub",
+                    Location       = "45 Grill Street, Birmingham, B1 3CD",
+                    ContactNumber  = "0121987654",
+                    CreatedAt      = new DateTime(2023, 7, 15, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt      = new DateTime(2023, 7, 15, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new()
                 {
-                    RestaurantID    = _restaurant3Id,
-                    RestaurantName  = "Pizza Palace",
-                    Location        = "78 Dough Avenue, London, EC1 4EF",
-                    ContactNumber   = "0207654321",
-                    CreatedAt       = new DateTime(2023, 8, 10, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt       = new DateTime(2023, 8, 10, 0, 0, 0, DateTimeKind.Utc)
+                    RestaurantID   = _restaurant3Id,
+                    RestaurantName = "Pizza Palace",
+                    Location       = "78 Dough Avenue, London, EC1 4EF",
+                    ContactNumber  = "0207654321",
+                    CreatedAt      = new DateTime(2023, 8, 10, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt      = new DateTime(2023, 8, 10, 0, 0, 0, DateTimeKind.Utc)
                 }
             };
 
             await context.Restaurants.AddRangeAsync(restaurants);
             await context.SaveChangesAsync();
+            context.ChangeTracker.Clear();
+
             logger.LogInformation("Seeded {Count} restaurants.", restaurants.Count);
         }
 
-        // Menu Items
+        // ── Menu Items ────────────────────────────────────────────────────────────
 
         private static async Task SeedMenuItemsAsync(ApplicationDbContext context, ILogger logger)
         {
@@ -283,10 +302,12 @@ namespace FoodOrderingServices.Infrastructure.Data
 
             await context.MenuItems.AddRangeAsync(menuItems);
             await context.SaveChangesAsync();
+            context.ChangeTracker.Clear();
+
             logger.LogInformation("Seeded {Count} menu items.", menuItems.Count);
         }
 
-        // Orders
+        // ── Orders ────────────────────────────────────────────────────────────────
 
         private static async Task SeedOrdersAsync(ApplicationDbContext context, ILogger logger)
         {
@@ -305,7 +326,7 @@ namespace FoodOrderingServices.Infrastructure.Data
                     RestaurantID = _restaurant1Id,
                     Status       = OrderStatus.Delivered,
                     OrderDate    = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc),
-                    TotalAmount  = 1598   // Chicken Tikka Masala x1 (1299) + Garlic Naan x1 (299)
+                    TotalAmount  = 1598  // Chicken Tikka Masala x1 (1299) + Garlic Naan x1 (299)
                 },
                 new()
                 {
@@ -314,7 +335,7 @@ namespace FoodOrderingServices.Infrastructure.Data
                     RestaurantID = _restaurant2Id,
                     Status       = OrderStatus.Confirmed,
                     OrderDate    = new DateTime(2024, 6, 5, 18, 30, 0, DateTimeKind.Utc),
-                    TotalAmount  = 1448   // Classic Cheeseburger x1 (899) + Loaded Fries x1 (549)
+                    TotalAmount  = 1448  // Classic Cheeseburger x1 (899) + Loaded Fries x1 (549)
                 },
                 new()
                 {
@@ -323,20 +344,18 @@ namespace FoodOrderingServices.Infrastructure.Data
                     RestaurantID = _restaurant3Id,
                     Status       = OrderStatus.Pending,
                     OrderDate    = new DateTime(2024, 6, 10, 20, 0, 0, DateTimeKind.Utc),
-                    TotalAmount  = 2398   // Margherita Pizza x1 (1099) + Pepperoni Pizza x1 (1199) + Tiramisu x1 (599) - wait, 1099+1199+599=2897
-                                         // Let's keep it simple: Margherita x2 (2198)
+                    TotalAmount  = 2198  // Margherita Pizza x2 (1099 × 2)
                 }
             };
 
-            // Recalculate TotalAmount to be precise
-            orders[2].TotalAmount = 2198; // Margherita x2
-
             await context.Orders.AddRangeAsync(orders);
             await context.SaveChangesAsync();
+            context.ChangeTracker.Clear();
+
             logger.LogInformation("Seeded {Count} orders.", orders.Count);
         }
 
-        // Order Details
+        // ── Order Details ─────────────────────────────────────────────────────────
 
         private static async Task SeedOrderDetailsAsync(ApplicationDbContext context, ILogger logger)
         {
@@ -353,7 +372,7 @@ namespace FoodOrderingServices.Infrastructure.Data
                 {
                     OrderDetailID = _orderDetail1Id,
                     OrderID       = _order1Id,
-                    ItemID        = _menuItem1Id,   // Chicken Tikka Masala
+                    ItemID        = _menuItem1Id,  // Chicken Tikka Masala
                     Quantity      = 1,
                     UnitPrice     = 1299
                 },
@@ -361,7 +380,7 @@ namespace FoodOrderingServices.Infrastructure.Data
                 {
                     OrderDetailID = _orderDetail2Id,
                     OrderID       = _order1Id,
-                    ItemID        = _menuItem2Id,   // Garlic Naan
+                    ItemID        = _menuItem2Id,  // Garlic Naan
                     Quantity      = 1,
                     UnitPrice     = 299
                 },
@@ -371,7 +390,7 @@ namespace FoodOrderingServices.Infrastructure.Data
                 {
                     OrderDetailID = _orderDetail3Id,
                     OrderID       = _order2Id,
-                    ItemID        = _menuItem4Id,   // Classic Cheeseburger
+                    ItemID        = _menuItem4Id,  // Classic Cheeseburger
                     Quantity      = 1,
                     UnitPrice     = 899
                 },
@@ -379,7 +398,7 @@ namespace FoodOrderingServices.Infrastructure.Data
                 {
                     OrderDetailID = _orderDetail4Id,
                     OrderID       = _order2Id,
-                    ItemID        = _menuItem5Id,   // Loaded Fries
+                    ItemID        = _menuItem5Id,  // Loaded Fries
                     Quantity      = 1,
                     UnitPrice     = 549
                 },
@@ -389,7 +408,7 @@ namespace FoodOrderingServices.Infrastructure.Data
                 {
                     OrderDetailID = _orderDetail5Id,
                     OrderID       = _order3Id,
-                    ItemID        = _menuItem7Id,   // Margherita Pizza
+                    ItemID        = _menuItem7Id,  // Margherita Pizza
                     Quantity      = 2,
                     UnitPrice     = 1099
                 }
@@ -397,6 +416,8 @@ namespace FoodOrderingServices.Infrastructure.Data
 
             await context.OrderDetails.AddRangeAsync(orderDetails);
             await context.SaveChangesAsync();
+            context.ChangeTracker.Clear();
+
             logger.LogInformation("Seeded {Count} order detail lines.", orderDetails.Count);
         }
     }

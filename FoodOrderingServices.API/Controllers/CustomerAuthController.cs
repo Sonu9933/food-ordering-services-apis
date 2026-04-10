@@ -9,8 +9,9 @@ namespace FoodOrderingServices.API.Controllers
     /// <summary>
     /// Handles customer authentication operations including login and registration.
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/v{v:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion(1)]
     [EnableRateLimiting("limiting")]
     public class CustomerAuthController : ControllerBase
     {
@@ -37,7 +38,6 @@ namespace FoodOrderingServices.API.Controllers
         /// <response code="200">Authentication successful.</response>
         /// <response code="401">Authentication failed - invalid credentials.</response>
         /// <response code="500">An unexpected error occurred during login.</response>
-        [ApiVersion(1)]
         [HttpPost("login-consumer")]
         [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -73,7 +73,6 @@ namespace FoodOrderingServices.API.Controllers
         /// <response code="200">Registration successful.</response>
         /// <response code="400">Registration failed - invalid input or business rule violation.</response>
         /// <response code="500">An unexpected error occurred during registration.</response>
-        [ApiVersion(1)]
         [HttpPost("register-consumer")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -92,13 +91,11 @@ namespace FoodOrderingServices.API.Controllers
             }
             catch (InvalidOperationException exception)
             {
-                // Business rule violation (e.g., email already exists)
                 logger.LogWarning(exception, "Registration failed for email: {Email}", register.Email);
                 return BadRequest(new { message = exception.Message });
             }
             catch (Exception exception)
             {
-                // Unexpected error
                 logger.LogError(exception, "Unexpected error during registration for email: {Email}", register.Email);
                 return StatusCode(500, new { message = "An error occurred during registration" });
             }
