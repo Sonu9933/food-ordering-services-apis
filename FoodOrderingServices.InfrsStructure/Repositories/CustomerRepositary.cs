@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using FoodOrderingServices.Core.Contracts.Repositories;
 using FoodOrderingServices.Infrastructure.Data;
 
@@ -14,33 +15,47 @@ namespace FoodOrderingServices.Infrastructure.Repositories
     public class CustomerRepositary : ICustomerRepositary
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        private IDistributedCache _distributedCache;
+        private readonly IDistributedCache _distributedCache;
+        private readonly ILogger<CustomerRepositary> _logger;
 
-        public CustomerRepositary(ApplicationDbContext customerDbContext, IDistributedCache distributedCache) 
+        public CustomerRepositary(
+            ApplicationDbContext customerDbContext,
+            IDistributedCache distributedCache,
+            ILogger<CustomerRepositary> logger)
         {
             _applicationDbContext = customerDbContext;
             _distributedCache = distributedCache;
+            _logger = logger;
         }
 
         public async Task<Core.Entity.Customer?> LoginCustomerAsync(string email, string password)
         {
-            var cacheCustomer = await _distributedCache.GetStringAsync(email);
-
-            if (cacheCustomer != null)
+            // Attempt cache lookup — fall back silently if Redis is unavailable
+            try
             {
-                var cachedCustomer = System.Text.Json.JsonSerializer.Deserialize<Core.Entity.Customer>(cacheCustomer);
-                if (cachedCustomer != null && BCrypt.Net.BCrypt.Verify(password, cachedCustomer.PasswordHash))
+                var cacheCustomer = await _distributedCache.GetStringAsync(email);
+                if (cacheCustomer != null)
                 {
-                    return cachedCustomer;
+                    var cachedCustomer = System.Text.Json.JsonSerializer.Deserialize<Core.Entity.Customer>(cacheCustomer);
+                    if (cachedCustomer != null && BCrypt.Net.BCrypt.Verify(password, cachedCustomer.PasswordHash))
+                    {
+                        return cachedCustomer;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Redis unavailable for key '{Email}'. Falling back to database.", email);
+            }
 
+            // Database fallback
             var customer = await _applicationDbContext
                 .Customers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Email == email);
 
-            if (customer == null) { 
+            if (customer == null || !BCrypt.Net.BCrypt.Verify(password, customer.PasswordHash))
+            {
                 return null;
             }
 
@@ -48,17 +63,27 @@ namespace FoodOrderingServices.Infrastructure.Repositories
             _applicationDbContext.Customers.Update(customer);
             await _applicationDbContext.SaveChangesAsync();
 
-            _distributedCache.SetString(email, System.Text.Json.JsonSerializer.Serialize(customer),
-                new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
-                });
+            // Attempt to repopulate cache — ignore failures
+            try
+            {
+                await _distributedCache.SetStringAsync(
+                    email,
+                    System.Text.Json.JsonSerializer.Serialize(customer),
+                    new DistributedCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                    });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Redis unavailable. Could not cache customer '{Email}'.", email);
+            }
 
             return customer;
         }
 
-        public async Task<Core.Entity.Customer?> RegisterCustomerAsync(string customerName, 
-            string email, 
+        public async Task<Core.Entity.Customer?> RegisterCustomerAsync(string customerName,
+            string email,
             string password)
         {
             if (await _applicationDbContext.Customers.AnyAsync(c => c.Email == email))
