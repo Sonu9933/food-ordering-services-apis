@@ -37,7 +37,7 @@ namespace FoodOrderingServices.API
         /// Configures services, middleware, and starts the web host.
         /// </summary>
         /// <param name="args">Command line arguments.</param>
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -202,6 +202,9 @@ namespace FoodOrderingServices.API
 
             // Apply rate limiting to all controllers
             app.MapControllers().RequireRateLimiting("limiting");
+
+            // Seed database with initial data
+            await DataSeeder.SeedAsync(app.Services);
 
             // Start the application
             app.Run();
