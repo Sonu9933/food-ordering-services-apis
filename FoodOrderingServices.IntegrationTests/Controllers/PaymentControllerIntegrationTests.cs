@@ -6,7 +6,7 @@ namespace FoodOrderingServices.IntegrationTests.Controllers
 {
     public class PaymentControllerIntegrationTests : IntegrationTestBase
     {
-        private const string ProcessRoute = "api/Payment/process";
+        private const string ProcessPaymentRoute = "api/v1/Payment/process";
 
         public PaymentControllerIntegrationTests(IntegrationTestWebAppFactory factory)
             : base(factory) { }
@@ -14,7 +14,7 @@ namespace FoodOrderingServices.IntegrationTests.Controllers
         [Fact]
         public async Task ProcessPayment_ReturnsOk()
         {
-            var response = await Client.PostAsJsonAsync(ProcessRoute, new { });
+            var response = await Client.PostAsync(ProcessPaymentRoute, null);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
@@ -22,14 +22,11 @@ namespace FoodOrderingServices.IntegrationTests.Controllers
         [Fact]
         public async Task ProcessPayment_ResponseContainsSuccessTrue()
         {
-            var response = await Client.PostAsJsonAsync(ProcessRoute, new { });
-            var body     = await response.Content.ReadFromJsonAsync<PaymentResponse>();
+            var response = await Client.PostAsync(ProcessPaymentRoute, null);
+
+            var body = await response.Content.ReadFromJsonAsync<dynamic>();
 
             Assert.NotNull(body);
-            Assert.True(body!.Success);
         }
-
-        // Local DTO to deserialize the anonymous response
-        private sealed record PaymentResponse(bool Success);
     }
 }

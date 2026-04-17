@@ -7,9 +7,9 @@ namespace FoodOrderingServices.IntegrationTests.Controllers
 {
     public class OrderControllerIntegrationTests : IntegrationTestBase
     {
-        private const string PlaceOrderRoute = "api/Order/place-order";
-        private const string GetByIdRoute    = "api/Order/get-order-detail-orderId";
-        private const string GetByCustRoute  = "api/Order/get-order-detail-customerId";
+        private const string PlaceOrderRoute = "api/v1/Order/place-order";
+        private const string GetByIdRoute    = "api/v1/Order/get-order-detail-orderId";
+        private const string GetByCustRoute  = "api/v1/Order/get-order-detail-customerId";
 
         public OrderControllerIntegrationTests(IntegrationTestWebAppFactory factory)
             : base(factory) { }
@@ -99,11 +99,11 @@ namespace FoodOrderingServices.IntegrationTests.Controllers
                 new OrderItemDTO
                 {
                     RestaurantID = Guid.NewGuid(),
-                    ItemID       = Guid.NewGuid(),
-                    ItemName     = "Burger",
-                    Description  = "Grilled",
-                    Price        = 10,
-                    Quantity     = 2
+                    ItemID = Guid.NewGuid(),
+                    ItemName = "Test Item",
+                    Description = "Test Description",
+                    Price = 10,
+                    Quantity = 1
                 }
             ]
         };

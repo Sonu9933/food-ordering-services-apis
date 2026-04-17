@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Polly;
+using StackExchange.Redis;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -22,16 +23,6 @@ namespace FoodOrderingServices.API
     /// </summary>
     public class Program
     {
-        /// <summary>
-        /// Main entry point for the application.
-        /// Configures services, middleware, and starts the web host.
-        /// </summary>
-        /// <param name="args">Command line arguments.</param>
-        /// <summary>
-        /// Main entry point for the application.
-        /// Configures services, middleware, and starts the web host.
-        /// </summary>
-        /// <param name="args">Command line arguments.</param>
         /// <summary>
         /// Main entry point for the application.
         /// Configures services, middleware, and starts the web host.
@@ -131,14 +122,14 @@ namespace FoodOrderingServices.API
             });
 
             // Redis Caching
-            // Configure Redis Caching
-            // This helps to improve the performance of our API by storing frequently accessed data in a fast, in-memory cache
-            builder.Services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
-
-            });
-
+            // Configure Redis Caching with ICacheRepository
+            var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection") ?? "localhost:6379";
+            var options_redis = ConfigurationOptions.Parse(redisConnectionString);
+            options_redis.AbortOnConnectFail = false;
+            
+            var connectionMultiplexer = ConnectionMultiplexer.Connect(options_redis);
+            builder.Services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+            builder.Services.AddScoped<ICacheRepository, RedisRepository>();
 
             // Dependency Injection
             // Register application services and repositories for dependency injection
@@ -198,16 +189,10 @@ namespace FoodOrderingServices.API
 
             //app.MapGet("/api/resource", () => "This endpoint is rate limited")
             //.RequireRateLimiting("fixed"); // Apply specific policy to an endpoint
-            app.UseRateLimiter();
 
-            // Apply rate limiting to all controllers
-            app.MapControllers().RequireRateLimiting("limiting");
+            app.MapControllers();
 
-            // Seed database with initial data
-            await DataSeeder.SeedAsync(app.Services);
-
-            // Start the application
-            app.Run();
+            await app.RunAsync();
         }
     }
 }

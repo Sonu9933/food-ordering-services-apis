@@ -7,7 +7,7 @@ namespace FoodOrderingServices.IntegrationTests.Controllers
 {
     public class RestaurantControllerIntegrationTests : IntegrationTestBase
     {
-        private const string BaseRoute     = "api/Restaurant";
+        private const string BaseRoute     = "api/v1/Restaurant";
         private const string GetAllRoute   = $"{BaseRoute}/get-all-restaurents";
         private const string RegisterRoute = $"{BaseRoute}/register-restaurant";
         private const string UpdateRoute   = $"{BaseRoute}/update-restaurant";
@@ -26,7 +26,7 @@ namespace FoodOrderingServices.IntegrationTests.Controllers
         [Fact]
         public async Task GetAllRestaurents_ReturnsRegisteredRestaurant()
         {
-            await RegisterRestaurantAsync("Sushi Palace", "1111111111");
+            await RegisterRestaurantAsync("Sushi Palace", "Downtown", "1111111111");
 
             var response     = await Client.GetAsync(GetAllRoute);
             var restaurants  = await response.Content
@@ -40,7 +40,7 @@ namespace FoodOrderingServices.IntegrationTests.Controllers
         [Fact]
         public async Task RegisterRestaurant_ReturnsOk_WithValidRequest()
         {
-            var request  = BuildRequest("Burger Joint", "2222222222");
+            var request  = BuildRequest("Burger Joint", "Uptown", "2222222222");
             var response = await Client.PostAsJsonAsync(RegisterRoute, request);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -49,27 +49,21 @@ namespace FoodOrderingServices.IntegrationTests.Controllers
         [Fact]
         public async Task RegisterRestaurant_ReturnsBadRequest_WhenDuplicateNameExists()
         {
-            await RegisterRestaurantAsync("Duplicate Cafe", "3333333333");
-
-            var request  = BuildRequest("Duplicate Cafe", "4444444444");
+            await RegisterRestaurantAsync("Pizza Place", "Midtown", "3333333333");
+            var request  = BuildRequest("Pizza Place", "Downtown", "4444444444"); // same name, different location/phone
             var response = await Client.PostAsJsonAsync(RegisterRoute, request);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-
         [Fact]
         public async Task UpdateRestaurant_ReturnsOk_WhenRestaurantExists()
         {
-            var original = BuildRequest("Update Me", "5555555555");
-            await Client.PostAsJsonAsync(RegisterRoute, original);
-
-            var updateRequest = new AddRestaurantRequest
-            {
-                RestaurantName = "Update Me",
-                Location       = "Paris",
-                ContactNumber  = "5555555555"
-            };
+            // Register a restaurant
+            await RegisterRestaurantAsync("Italian Bistro", "Riverside", "5555555555");
+            
+            // Update the same restaurant with new location and phone (keep the name the same)
+            var updateRequest = BuildRequest("Italian Bistro", "Updated Riverside", "6666666666");
 
             var response = await Client.PostAsJsonAsync(UpdateRoute, updateRequest);
 
@@ -79,23 +73,29 @@ namespace FoodOrderingServices.IntegrationTests.Controllers
         [Fact]
         public async Task UpdateRestaurant_ReturnsBadRequest_WhenRestaurantDoesNotExist()
         {
-            var request  = BuildRequest("Ghost Cafe", "9999999999");
-            var response = await Client.PostAsJsonAsync(UpdateRoute, request);
+            var updateRequest = BuildRequest("Non Existent", "NoWhere", "7777777777");
+
+            var response = await Client.PostAsJsonAsync(UpdateRoute, updateRequest);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        private async Task RegisterRestaurantAsync(string name, string phone)
+        private async Task<Guid> RegisterRestaurantAsync(string name, string location, string phone)
         {
-            var response = await Client.PostAsJsonAsync(RegisterRoute, BuildRequest(name, phone));
+            var request = BuildRequest(name, location, phone);
+            var response = await Client.PostAsJsonAsync(RegisterRoute, request);
             response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+            // The controller returns a string response, not the DTO directly
+            // We'll just return a new GUID as the ID
+            return Guid.NewGuid();
         }
 
-        private static AddRestaurantRequest BuildRequest(string name, string phone) => new()
+        private static AddRestaurantRequest BuildRequest(string name, string location, string phone) => new()
         {
             RestaurantName = name,
-            Location       = "London",
-            ContactNumber  = phone
+            Location = location,
+            ContactNumber = phone
         };
     }
 }

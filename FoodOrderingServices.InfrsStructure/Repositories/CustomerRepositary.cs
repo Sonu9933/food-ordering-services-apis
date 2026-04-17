@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using FoodOrderingServices.Core.Contracts.Repositories;
 using FoodOrderingServices.Infrastructure.Data;
@@ -15,16 +14,16 @@ namespace FoodOrderingServices.Infrastructure.Repositories
     public class CustomerRepositary : ICustomerRepositary
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        private readonly IDistributedCache _distributedCache;
+        private readonly ICacheRepository _cacheRepository;
         private readonly ILogger<CustomerRepositary> _logger;
 
         public CustomerRepositary(
             ApplicationDbContext customerDbContext,
-            IDistributedCache distributedCache,
+            ICacheRepository cacheRepository, 
             ILogger<CustomerRepositary> logger)
         {
             _applicationDbContext = customerDbContext;
-            _distributedCache = distributedCache;
+            _cacheRepository = cacheRepository;
             _logger = logger;
         }
 
@@ -33,10 +32,10 @@ namespace FoodOrderingServices.Infrastructure.Repositories
             // Attempt cache lookup — fall back silently if Redis is unavailable
             try
             {
-                var cacheCustomer = await _distributedCache.GetStringAsync(email);
+                var cacheCustomer = await _cacheRepository.GetAsync<Core.Entity.Customer>(email);
                 if (cacheCustomer != null)
                 {
-                    var cachedCustomer = System.Text.Json.JsonSerializer.Deserialize<Core.Entity.Customer>(cacheCustomer);
+                    var cachedCustomer = cacheCustomer;
                     if (cachedCustomer != null && BCrypt.Net.BCrypt.Verify(password, cachedCustomer.PasswordHash))
                     {
                         return cachedCustomer;
@@ -66,13 +65,10 @@ namespace FoodOrderingServices.Infrastructure.Repositories
             // Attempt to repopulate cache — ignore failures
             try
             {
-                await _distributedCache.SetStringAsync(
+                await _cacheRepository.SetAsync<Core.Entity.Customer>(
                     email,
-                    System.Text.Json.JsonSerializer.Serialize(customer),
-                    new DistributedCacheEntryOptions
-                    {
-                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
-                    });
+                    customer,
+                    TimeSpan.FromMinutes(5));
             }
             catch (Exception ex)
             {
